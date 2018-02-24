@@ -1,42 +1,30 @@
 package shelest.range;
 public class Range {
-    private double from1;
-    private double to1;
-    private double from2;
-    private double to2;
+    private double from;
+    private double to;
 
-    public Range(double from1, double to1, double from2, double to2) {
-        this.from1 = from1;
-        this.to1 = to1;
-        this.from2 = from2;
-        this.to2 = to2;
+    public Range(double from, double to) {
+        this.from = from;
+        this.to = to;
     }
 
-    public void setFrom1(double from1) {
-        this.from1 = from1;
+    public void setFrom(double from) {
+        this.from = from;
     }
 
-    public void setTo1(double to1) {
-        this.to1 = to1;
-    }
-
-    public void setFrom2(double from2) {
-        this.from2 = from2;
-    }
-
-    public void setTo2(double to2) {
-        this.to2 = to2;
+    public void setTo(double to) {
+        this.to = to;
     }
 
     public double getLengthRange() {
-        return Math.abs(to1 - from1);
+        return Math.abs(to - from);
     }
 
     public boolean isInside(double number) {
-        return from1 < number & number < to1;
+        return from < number & number < to;
     }
 
-    public double[] getIntersectionRanges() {
+    public double[] getIntersectionRanges(double from1, double to1, double from2, double to2) {
         double[] resultIntersection = new double[2];
         if (from1 > from2) {
             resultIntersection[0] = from1;
@@ -57,7 +45,7 @@ public class Range {
         return resultIntersection;
     }
 
-    public double[] getUnionRange() {
+    public double[] getUnionRange(double from1, double to1, double from2, double to2) {
         double[] resultUnion = new double[4];
         if (from1 <= from2) {
             if (to1 >= to2) {
@@ -93,8 +81,8 @@ public class Range {
         return resultUnion;
     }
 
-    public double[] getDifferenceRange() {
-        double[] resultIntersection = getIntersectionRanges();
+    public double[] getDifferenceRange(double from1, double to1, double from2, double to2) {
+        double[] resultIntersection = getIntersectionRanges(from1, to1, from2, to2);
         double[] resultDifference = {from1, to1};
         if (resultIntersection == null) {
             return resultDifference;
