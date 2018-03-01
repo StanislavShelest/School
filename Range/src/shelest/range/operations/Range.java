@@ -1,0 +1,158 @@
+package shelest.range.operations;
+
+public class Range {
+    private double from;
+    private double to;
+
+    public Range(double from, double to) {
+        this.from = from;
+        this.to = to;
+    }
+
+    public void setFrom(double from) {
+        this.from = from;
+    }
+
+    public void setTo(double to) {
+        this.to = to;
+    }
+
+    public double getFrom() {
+        return from;
+    }
+
+    public double getTo() {
+        return to;
+    }
+
+    public double getLengthRange() {
+        return Math.abs(to - from);
+    }
+
+    public boolean isInside(double number) {
+        return from <= number & number <= to;
+    }
+
+    public Range getIntersectionRanges(Range range) {
+        double fromIntersection;
+        double toIntersection;
+        if (this.from > range.from) {
+            fromIntersection = this.from;
+        } else {
+            fromIntersection = range.from;
+        }
+
+        if (this.to < range.to) {
+            toIntersection = this.to;
+        } else {
+            toIntersection = range.to;
+        }
+
+        if (fromIntersection > toIntersection) {
+            return null;
+        }
+        return new Range(fromIntersection, toIntersection);
+    }
+
+    public Range[] getUnionRanges(Range range) {
+        double fromUnion1;
+        double toUnion1;
+        double fromUnion2 = 0;
+        double toUnion2 = 0;
+        if (this.from <= range.from) {
+            if (this.to >= range.to) {
+                fromUnion1 = this.from;
+                toUnion1 = this.to;
+            } else {
+                if (this.to >= range.from) {
+                    fromUnion1 = this.from;
+                    toUnion1 = range.to;
+                } else {
+                    fromUnion1 = this.from;
+                    toUnion1 = this.to;
+                    fromUnion2 = range.from;
+                    toUnion2 = range.to;
+                }
+            }
+        } else {
+            if (range.to >= this.to) {
+                fromUnion1 = range.from;
+                toUnion1 = range.to;
+            } else {
+                if (range.to >= this.from) {
+                    fromUnion1 = range.from;
+                    toUnion1 = this.to;
+                } else {
+                    fromUnion1 = range.from;
+                    toUnion1 = range.to;
+                    fromUnion2 = this.from;
+                    toUnion2 = this.to;
+                }
+            }
+        }
+        Range resultUnion1 = new Range(fromUnion1, toUnion1);
+        Range resultUnion2 = new Range(fromUnion2, toUnion2);
+        return new Range[]{resultUnion1, resultUnion2};
+    }
+
+    public Range[] getDifferenceRanges(Range range) {
+        double fromIntersection;
+        double toIntersection;
+        boolean resultIntersection = false;
+        double fromDifference1 = 0;
+        double toDifference1 = 0;
+        double fromDifference2 = 0;
+        double toDifference2 = 0;
+        if (this.from > range.from) {
+            fromIntersection = this.from;
+        } else {
+            fromIntersection = range.from;
+        }
+
+        if (this.to < range.to) {
+            toIntersection = this.to;
+        } else {
+            toIntersection = range.to;
+        }
+
+        if (fromIntersection > toIntersection) {
+            resultIntersection = true;
+        }
+
+        if (resultIntersection) {
+            fromDifference1 = this.from;
+            toDifference1 = this.to;
+            Range resultDifference1 = new Range(fromDifference1, toDifference1);
+            Range resultDifference2 = new Range(fromDifference2, toDifference2);
+            return new Range[]{resultDifference1, resultDifference2};
+        }
+
+        if (this.from == fromIntersection & this.to == toIntersection){
+            return null;
+        }
+
+        if (this.from <= fromIntersection) {
+            if (this.to <= toIntersection) {
+                fromDifference1 = this.from;
+                toDifference1 = fromIntersection;
+            } else {
+                fromDifference1 = this.from;
+                toDifference1 = fromIntersection;
+                fromDifference2 = toIntersection;
+                toDifference2 = this.to;
+
+            }
+        } else {
+            if (toIntersection <= this.to) {
+                fromDifference1 = toIntersection;
+                toDifference1 = this.to;
+            }
+        }
+        Range resultDifference1 = new Range(fromDifference1, toDifference1);
+        Range resultDifference2 = new Range(fromDifference2, toDifference2);
+        return new Range[]{resultDifference1, resultDifference2};
+    }
+
+}
+
+
