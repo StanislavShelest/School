@@ -46,16 +46,19 @@ public class Main {
             System.out.println("Результат пересечения диапазонов: от " + resultIntersection.getFrom() + " до " + resultIntersection.getTo());
         }
 
-        Range[] resultUnionArray = (Range[]) Arrays.copyOf(range1.getUnion(range2), 2);
-        Range resultUnion1 = resultUnionArray[0];
-        Range resultUnion2 = resultUnionArray[1];
-        double fromUnion1 = resultUnion1.getFrom();
-        double toUnion1 = resultUnion1.getTo();
-        double fromUnion2 = resultUnion2.getFrom();
-        double toUnion2 = resultUnion2.getTo();
-        if (fromUnion2 == 0 & toUnion2 == 0 & (from1 != to1 || from2 != to2)) {
+        Range[] resultUnionArray = (Range[]) Arrays.copyOf(range1.getUnion(range2), range1.getUnion(range2).length);
+        if (resultUnionArray.length == 1) {
+            Range resultUnion1 = resultUnionArray[0];
+            double fromUnion1 = resultUnion1.getFrom();
+            double toUnion1 = resultUnion1.getTo();
             System.out.println("Результат объединения равен: от " + fromUnion1 + " до " + toUnion1);
         } else {
+            Range resultUnion1 = resultUnionArray[0];
+            Range resultUnion2 = resultUnionArray[1];
+            double fromUnion1 = resultUnion1.getFrom();
+            double toUnion1 = resultUnion1.getTo();
+            double fromUnion2 = resultUnion2.getFrom();
+            double toUnion2 = resultUnion2.getTo();
             System.out.println("Результат объединения равен: от " + fromUnion1 + " до " + toUnion1 + " и от " + fromUnion2 + " до " + toUnion2);
         }
 
@@ -63,23 +66,23 @@ public class Main {
         if (resultDifferenceArray.length == 0) {
             System.out.println("Нет значений");
         } else {
-            Range resultDifference1 = resultDifferenceArray[0];
-            Range resultDifference2 = resultDifferenceArray[1];
-            double fromDifference1 = resultDifference1.getFrom();
-            double toDifference1 = resultDifference1.getTo();
-            double fromDifference2 = resultDifference2.getFrom();
-            double toDifference2 = resultDifference2.getTo();
-            if (fromDifference2 == 0 & toDifference2 == 0) {
+            if (resultDifferenceArray.length == 1) {
+                Range resultDifference1 = resultDifferenceArray[0];
+                double fromDifference1 = resultDifference1.getFrom();
+                double toDifference1 = resultDifference1.getTo();
                 System.out.println("Результат разности диапазонов равен: от " + fromDifference1 + " до " + toDifference1);
             } else {
-                if (fromDifference1 == toDifference1) {
-                    System.out.println("Результат разности диапазонов равен: от " + fromDifference2 + " до " + toDifference2);
-                } else {
-                    System.out.println("Результат разности диапазонов равен: от " + fromDifference1 + " до " + toDifference1 + " и от " + fromDifference2 + " до " + toDifference2);
-                }
+                Range resultDifference1 = resultDifferenceArray[0];
+                Range resultDifference2 = resultDifferenceArray[1];
+                double fromDifference1 = resultDifference1.getFrom();
+                double toDifference1 = resultDifference1.getTo();
+                double fromDifference2 = resultDifference2.getFrom();
+                double toDifference2 = resultDifference2.getTo();
+                System.out.println("Результат разности диапазонов равен: от " + fromDifference1 + " до " + toDifference1 + " и от " + fromDifference2 + " до " + toDifference2);
             }
         }
     }
 }
+
 
 
