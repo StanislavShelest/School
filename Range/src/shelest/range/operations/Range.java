@@ -25,36 +25,26 @@ public class Range {
         return to;
     }
 
-    public double getLengthRange() {
-        return Math.abs(to - from);
+    public double getLength() {
+        return to - from;
     }
 
     public boolean isInside(double number) {
         return from <= number & number <= to;
     }
 
-    public Range getIntersectionRanges(Range range) {
+    public Range getIntersection(Range range) {
         double fromIntersection;
         double toIntersection;
-        if (this.from > range.from) {
-            fromIntersection = this.from;
-        } else {
-            fromIntersection = range.from;
-        }
-
-        if (this.to < range.to) {
-            toIntersection = this.to;
-        } else {
-            toIntersection = range.to;
-        }
-
-        if (fromIntersection > toIntersection) {
+        fromIntersection = Math.max(this.from, range.from);
+        toIntersection = Math.min(this.to, range.to);
+        if (fromIntersection >= toIntersection) {
             return null;
         }
         return new Range(fromIntersection, toIntersection);
     }
 
-    public Range[] getUnionRanges(Range range) {
+    public Range[] getUnion(Range range) {
         double fromUnion1;
         double toUnion1;
         double fromUnion2 = 0;
@@ -95,7 +85,7 @@ public class Range {
         return new Range[]{resultUnion1, resultUnion2};
     }
 
-    public Range[] getDifferenceRanges(Range range) {
+    public Range[] getDifference(Range range) {
         double fromIntersection;
         double toIntersection;
         boolean resultIntersection = false;
@@ -103,19 +93,11 @@ public class Range {
         double toDifference1 = 0;
         double fromDifference2 = 0;
         double toDifference2 = 0;
-        if (this.from > range.from) {
-            fromIntersection = this.from;
-        } else {
-            fromIntersection = range.from;
-        }
 
-        if (this.to < range.to) {
-            toIntersection = this.to;
-        } else {
-            toIntersection = range.to;
-        }
+        fromIntersection = Math.max(this.from, range.from);
+        toIntersection = Math.min(this.to, range.to);
 
-        if (fromIntersection > toIntersection) {
+        if (fromIntersection >= toIntersection) {
             resultIntersection = true;
         }
 
@@ -128,7 +110,7 @@ public class Range {
         }
 
         if (this.from == fromIntersection & this.to == toIntersection){
-            return null;
+            return new Range[0];
         }
 
         if (this.from <= fromIntersection) {

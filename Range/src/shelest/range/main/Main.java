@@ -1,5 +1,7 @@
 package shelest.range.main;
+
 import shelest.range.operations.Range;
+
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -29,7 +31,7 @@ public class Main {
         Range range1 = new Range(from1, to1);
         Range range2 = new Range(from2, to2);
 
-        System.out.println("Длина первого диапазона составляет: " + range1.getLengthRange());
+        System.out.println("Длина первого диапазона составляет: " + range1.getLength());
 
         if (range1.isInside(number)) {
             System.out.println("Введенное число входит в первый диапазон");
@@ -37,14 +39,14 @@ public class Main {
             System.out.println("Введенное число не входит в первый диапазон");
         }
 
-        if (range1.getIntersectionRanges(range2) == null) {
+        if (range1.getIntersection(range2) == null) {
             System.out.println("Диапазоны не имеют пересечения");
         } else {
-            Range resultIntersection = range1.getIntersectionRanges(range2);
+            Range resultIntersection = range1.getIntersection(range2);
             System.out.println("Результат пересечения диапазонов: от " + resultIntersection.getFrom() + " до " + resultIntersection.getTo());
         }
 
-        Range[] resultUnionArray = (Range[]) Arrays.copyOf(range1.getUnionRanges(range2), 2);
+        Range[] resultUnionArray = (Range[]) Arrays.copyOf(range1.getUnion(range2), 2);
         Range resultUnion1 = resultUnionArray[0];
         Range resultUnion2 = resultUnionArray[1];
         double fromUnion1 = resultUnion1.getFrom();
@@ -57,11 +59,10 @@ public class Main {
             System.out.println("Результат объединения равен: от " + fromUnion1 + " до " + toUnion1 + " и от " + fromUnion2 + " до " + toUnion2);
         }
 
-
-        if (range1.getDifferenceRanges(range2) == null) {
+        Range[] resultDifferenceArray = (Range[]) Arrays.copyOf(range1.getDifference(range2), range1.getDifference(range2).length);
+        if (resultDifferenceArray.length == 0) {
             System.out.println("Нет значений");
         } else {
-            Range[] resultDifferenceArray = (Range[]) Arrays.copyOf(range1.getDifferenceRanges(range2), 2);
             Range resultDifference1 = resultDifferenceArray[0];
             Range resultDifference2 = resultDifferenceArray[1];
             double fromDifference1 = resultDifference1.getFrom();
@@ -80,4 +81,5 @@ public class Main {
         }
     }
 }
+
 
