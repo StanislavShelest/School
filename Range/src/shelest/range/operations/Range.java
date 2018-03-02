@@ -114,7 +114,7 @@ public class Range {
         }
 
         if (this.from < fromIntersection) {
-            if (this.to < toIntersection) {
+            if (this.to <= toIntersection) {
                 fromDifference1 = this.from;
                 toDifference1 = fromIntersection;
             } else {
@@ -127,7 +127,7 @@ public class Range {
                 return new Range[]{resultDifference1, resultDifference2};
             }
         } else {
-            if (toIntersection < this.to) {
+            if (toIntersection <= this.to) {
                 fromDifference1 = toIntersection;
                 toDifference1 = this.to;
             }
