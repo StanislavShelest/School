@@ -15,7 +15,7 @@ public class Vector {
     }
 
     public Vector(int dimension) {
-        this.dimension = dimension;
+        this.dimension = getExclusionNegativeDimension(dimension);
         this.components = new double[dimension];
     }
 
@@ -30,8 +30,14 @@ public class Vector {
     }
 
     public Vector(int dimension, double[] components) {
-        this.dimension = dimension;
+        this.dimension = getExclusionNegativeDimension(dimension);
         this.components = Arrays.copyOf(components, dimension);
+    }
+
+    public static int getExclusionNegativeDimension(int dimension) {
+        if (dimension < 0) throw new IllegalArgumentException("Введена отрицательная размерность");
+        return dimension;
+
     }
 
     public int getSize() {
