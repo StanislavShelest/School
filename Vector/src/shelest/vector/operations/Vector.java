@@ -3,116 +3,103 @@ package shelest.vector.operations;
 import java.util.Arrays;
 
 public class Vector {
-    private int dimension;
     private double[] components;
 
-    public int getDimension() {
-        return dimension;
-    }
-
-    public double[] getComponents() {
-        return components;
-    }
-
     public Vector(int dimension) {
-        this.dimension = getExclusionNegativeDimension(dimension);
-        this.components = new double[dimension];
+        this.components = new double[getExclusionUnacceptableDimension(dimension)];
     }
 
     public Vector(Vector vector) {
-        this.dimension = vector.dimension;
         this.components = Arrays.copyOf(vector.components, vector.components.length);
     }
 
     public Vector(double[] components) {
-        this.dimension = components.length;
         this.components = Arrays.copyOf(components, components.length);
     }
 
     public Vector(int dimension, double[] components) {
-        this.dimension = getExclusionNegativeDimension(dimension);
-        this.components = Arrays.copyOf(components, dimension);
+        this.components = Arrays.copyOf(components, getExclusionUnacceptableDimension(dimension));
     }
 
-    public static int getExclusionNegativeDimension(int dimension) {
-        if (dimension < 0) throw new IllegalArgumentException("Введена отрицательная размерность");
+    private static int getExclusionUnacceptableDimension(int dimension) {
+        if (dimension <= 0) throw new IllegalArgumentException("Введена недопустимая размерность");
         return dimension;
 
     }
 
-    public int getSize() {
-        return this.dimension;
+    public double getCompanents(int index) {
+        return this.components[index];
     }
 
+    public void setComponents(int index, double component) {
+        this.components[index] = component;
+    }
+
+    public int getSize() {
+        return this.components.length;
+    }
+
+    @Override
     public String toString() {
-        return Arrays.toString(this.components);
+        StringBuilder line = new StringBuilder("{");
+        for (double component : this.components) {
+            line.append(component).append(", ");
+        }
+        line.delete(line.length() - 2, line.length());
+        return line + "}";
     }
 
     public Vector getAddition(Vector vector) {
-        int minDimension;
         double[] resultAddition;
-        if (this.dimension >= vector.dimension) {
-            minDimension = vector.dimension;
-            resultAddition = Arrays.copyOf(this.components, this.components.length);
+        if (this.components.length >= vector.components.length) {
+            for (int i = 0; i < vector.components.length; i++) {
+                this.components[i] = this.components[i] + vector.components[i];
+            }
         } else {
-            minDimension = this.dimension;
-            resultAddition = Arrays.copyOf(vector.components, vector.components.length);
+            this.components = Arrays.copyOf(this.components, vector.components.length);
+            for (int i = 0; i < this.components.length; i++) {
+                this.components[i] = this.components[i] + vector.components[i];
+            }
+
         }
-        for (int i = 0; i < minDimension; i++) {
-            resultAddition[i] = this.components[i] + vector.components[i];
-        }
-        return new Vector(resultAddition);
+        return this;
     }
 
     public Vector getSubtraction(Vector vector) {
-        int count;
-        double[] minuend;
-        double[] subtrahend;
-        if (this.dimension >= vector.dimension) {
-            count = this.dimension;
-            minuend = Arrays.copyOf(this.components, this.dimension);
-            subtrahend = Arrays.copyOf(vector.components, this.dimension);
+        if (this.components.length >= vector.components.length) {
+            for (int i = 0; i < vector.components.length; i++) {
+                this.components[i] = this.components[i] - vector.components[i];
+            }
         } else {
-            count = vector.dimension;
-            minuend = Arrays.copyOf(this.components, vector.dimension);
-            subtrahend = Arrays.copyOf(vector.components, vector.dimension);
+            this.components = Arrays.copyOf(this.components, vector.components.length);
+            for (int i = 0; i < vector.components.length; i++) {
+                this.components[i] = this.components[i] - vector.components[i];
+            }
         }
-        double[] resultSubtraction = new double[count];
-        for (int i = 0; i < count; i++) {
-            resultSubtraction[i] = minuend[i] - subtrahend[i];
-        }
-        return new Vector(resultSubtraction);
+        return this;
     }
 
     public Vector getMultiplicationByScalar(double scalar) {
-        double[] resultMultiplication = new double[this.dimension];
-        for (int i = 0; i < this.dimension; i++) {
-            resultMultiplication[i] = this.components[i] * scalar;
+        for (int i = 0; i < this.components.length; i++) {
+            this.components[i] = this.components[i] * scalar;
         }
-        return new Vector(resultMultiplication);
+        return this;
     }
 
     public Vector getTurn() {
-        double[] resultTurn = new double[this.dimension];
-        for (int i = 0; i < this.dimension; i++) {
-            resultTurn[i] = this.components[i] * (-1);
-        }
-        return new Vector(resultTurn);
+        getMultiplicationByScalar(-1);
+        return this;
     }
 
     public double getLength() {
-        double sum = Math.pow(this.components[0], 2);
-        for (int i = 1; i < this.dimension; i++) {
-            sum = sum + Math.pow(this.components[i], 2);
+        double sum = 0;
+        for (double component : this.components) {
+            sum = sum + Math.pow(component, 2);
         }
         return Math.sqrt(sum);
     }
 
-    public Vector getInstallationComponent(int index, double installableComponent) {
-        this.components[index] = installableComponent;
-        return new Vector(this.components);
-    }
-
+    @Override
     public boolean equals(Object o) {
         if (o == null) {
             return false;
@@ -124,14 +111,14 @@ public class Vector {
             return false;
         }
         Vector vector = (Vector) o;
-        return (this.getDimension() == vector.getDimension() || Arrays.equals(this.getComponents(), vector.getComponents()));
+        return (Arrays.equals(this.components, vector.components));
     }
 
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (Arrays.equals(getComponents(), null) ? 0 : Arrays.hashCode(getComponents()));
-        result = prime * result + getDimension();
+        result = prime * result + (Arrays.equals(components, null) ? 0 : Arrays.hashCode(components));
         return result;
     }
 }
