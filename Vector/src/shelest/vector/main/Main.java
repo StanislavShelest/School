@@ -49,13 +49,13 @@ public class Main {
         System.out.println("8. " + vector8.toString());
         System.out.println("9. " + vector9.toString());
 
-        System.out.println(System.lineSeparator() + "Размерность первого вектора составляет: " + vector1.getSize());
+        System.out.println(System.lineSeparator() + "Размерность первого вектора составляет: " + Vector.getSize(vector1));
         System.out.println("Результат сложения первого и второго векторов: " + vector1.getAddition(vector2).toString());
         System.out.println("Результат разности второго и третьего векторов: " + vector2.getSubtraction(vector3).toString());
         System.out.println("Результат умножения третьего вектора на 2: " + vector3.getMultiplicationByScalar(scalar).toString());
         System.out.println("Результат разворота четвертого вектора: " + vector4.getTurn().toString());
-        System.out.println("Длина пятого вектора: " + vector5.getLength());
-        vector5.setComponents(index, addedComponent);
+        System.out.println("Длина пятого вектора: " + Vector.getLength(vector5));
+        vector5.setComponent(index, addedComponent);
         System.out.println("Результат замены компонента пятого вектора: " + vector5.toString());
         System.out.println("Результат равенства шестого и восьмого векторов: " + vector6.equals(vector8));
         System.out.println("hashCode шестого вектора: " + vector6.hashCode());

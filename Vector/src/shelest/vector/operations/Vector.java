@@ -10,11 +10,11 @@ public class Vector {
     }
 
     public Vector(Vector vector) {
-        this.components = Arrays.copyOf(vector.components, vector.components.length);
+        this.components = Arrays.copyOf(vector.components, getExclusionUnacceptableDimension(vector.components.length));
     }
 
     public Vector(double[] components) {
-        this.components = Arrays.copyOf(components, components.length);
+        this.components = Arrays.copyOf(components, getExclusionUnacceptableDimension(components.length));
     }
 
     public Vector(int dimension, double[] components) {
@@ -22,59 +22,53 @@ public class Vector {
     }
 
     private static int getExclusionUnacceptableDimension(int dimension) {
-        if (dimension <= 0) throw new IllegalArgumentException("Введена недопустимая размерность");
+        if (dimension <= 0) {
+            throw new IllegalArgumentException("Введена недопустимая размерность");
+        }
         return dimension;
 
     }
 
-    public double getCompanents(int index) {
+    public double getCompanent(int index) {
         return this.components[index];
     }
 
-    public void setComponents(int index, double component) {
+    public void setComponent(int index, double component) {
         this.components[index] = component;
     }
 
-    public int getSize() {
-        return this.components.length;
+    public static int getSize(Vector vector) {
+        return vector.components.length;
     }
 
     @Override
     public String toString() {
-        StringBuilder line = new StringBuilder("{");
-        for (double component : this.components) {
-            line.append(component).append(", ");
-        }
-        line.delete(line.length() - 2, line.length());
-        return line + "}";
+        String line = Arrays.toString(this.components);
+        line = line.replace("[", "{");
+        line = line.replace("]", "}");
+        return line;
     }
 
     public Vector getAddition(Vector vector) {
-        double[] resultAddition;
+        int minLength;
         if (this.components.length >= vector.components.length) {
-            for (int i = 0; i < vector.components.length; i++) {
-                this.components[i] = this.components[i] + vector.components[i];
-            }
+            minLength = vector.components.length;
         } else {
+            minLength = this.components.length;
             this.components = Arrays.copyOf(this.components, vector.components.length);
-            for (int i = 0; i < this.components.length; i++) {
-                this.components[i] = this.components[i] + vector.components[i];
-            }
-
+        }
+        for (int i = 0; i < minLength; i++) {
+            this.components[i] = this.components[i] + vector.components[i];
         }
         return this;
     }
 
     public Vector getSubtraction(Vector vector) {
-        if (this.components.length >= vector.components.length) {
-            for (int i = 0; i < vector.components.length; i++) {
-                this.components[i] = this.components[i] - vector.components[i];
-            }
-        } else {
+        if (this.components.length < vector.components.length) {
             this.components = Arrays.copyOf(this.components, vector.components.length);
-            for (int i = 0; i < vector.components.length; i++) {
-                this.components[i] = this.components[i] - vector.components[i];
-            }
+        }
+        for (int i = 0; i < vector.components.length; i++) {
+            this.components[i] = this.components[i] - vector.components[i];
         }
         return this;
     }
@@ -87,13 +81,12 @@ public class Vector {
     }
 
     public Vector getTurn() {
-        getMultiplicationByScalar(-1);
-        return this;
+        return getMultiplicationByScalar(-1);
     }
 
-    public double getLength() {
+    public static double getLength(Vector vector) {
         double sum = 0;
-        for (double component : this.components) {
+        for (double component : vector.components) {
             sum = sum + Math.pow(component, 2);
         }
         return Math.sqrt(sum);
@@ -101,10 +94,10 @@ public class Vector {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null) {
+        if (o == this) {
             return false;
         }
-        if (o == this) {
+        if (o == null) {
             return true;
         }
         if (getClass() != o.getClass()) {
@@ -116,9 +109,9 @@ public class Vector {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (Arrays.equals(components, null) ? 0 : Arrays.hashCode(components));
-        return result;
+        final int prime = 37;
+        int hash = 1;
+        hash = prime * hash + Arrays.hashCode(components);
+        return hash;
     }
 }
