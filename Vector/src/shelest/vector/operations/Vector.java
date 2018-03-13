@@ -101,14 +101,12 @@ public class Vector {
         return resultSubtraction.getSubtraction(vector2);
     }
 
-    public static Vector getMultiplication(Vector vector1, Vector vector2) {
-        double[] resultMultiplication = new double[Math.max(vector1.components.length, vector2.components.length)];
-        double[] multiplier1 = Arrays.copyOf(vector1.components, Math.max(vector1.components.length, vector2.components.length));
-        double[] multiplier2 = Arrays.copyOf(vector2.components, Math.max(vector1.components.length, vector2.components.length));
-        for (int i = 0; i < Math.max(vector1.components.length, vector2.components.length); i++) {
-            resultMultiplication[i] = multiplier1[i] * multiplier2[i];
+    public static double getScalarMultiplication(Vector vector1, Vector vector2) {
+        double resultMultiplication = 0;
+        for (int i = 0; i < Math.min(vector1.components.length, vector2.components.length); i++) {
+            resultMultiplication = resultMultiplication + vector1.components[i] * vector2.components[i];
         }
-        return new Vector(resultMultiplication);
+        return resultMultiplication;
     }
 
     @Override
