@@ -62,7 +62,7 @@ public class Main {
         System.out.println("Результат умножения третьего вектора на скаляр: " + vector3.getMultiplicationByScalar(scalar).toString());
         System.out.println("Результат сложения десятого и одиннадцатого векторов статическим методом: " + Vector.getAddition(vector10, vector11).toString());
         System.out.println("Результат разности одиннадцатого и двенадцатого векторов статическим методом: " + Vector.getSubtraction(vector11, vector12).toString());
-        System.out.println("Результат умножения двенадцатого вектора на скаляр статическим методом: " + Vector.getMultiplicationByScalar(vector12, scalar).toString());
+        System.out.println("Результат умножения одиннадцатого вектора на двенадцатого статическим методом: " + Vector.getMultiplication(vector11, vector12).toString());
         System.out.println("Результат разворота четвертого вектора: " + vector4.getTurn().toString());
         System.out.println("Длина пятого вектора: " + vector5.getLength());
         vector5.setComponent(index, addedComponent);

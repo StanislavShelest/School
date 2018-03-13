@@ -92,30 +92,23 @@ public class Vector {
     }
 
     public static Vector getAddition(Vector vector1, Vector vector2) {
-        if (vector1.components.length < vector2.components.length) {
-            vector1.components = Arrays.copyOf(vector1.components, vector2.components.length);
-        }
-        for (int i = 0; i < vector2.components.length; i++) {
-            vector1.components[i] = vector1.components[i] + vector2.components[i];
-        }
-        return new Vector(vector1.components);
+        Vector resultAddition = new Vector(vector1);
+        return resultAddition.getAddition(vector2);
     }
 
-    public static Vector getSubtraction(Vector vector1,Vector vector2) {
-        if (vector1.components.length < vector2.components.length) {
-            vector1.components = Arrays.copyOf(vector1.components, vector2.components.length);
-        }
-        for (int i = 0; i < vector2.components.length; i++) {
-            vector1.components[i] = vector1.components[i] - vector2.components[i];
-        }
-        return new Vector(vector1.components);
+    public static Vector getSubtraction(Vector vector1, Vector vector2) {
+        Vector resultSubtraction = new Vector(vector1);
+        return resultSubtraction.getSubtraction(vector2);
     }
 
-    public static Vector getMultiplicationByScalar(Vector vector, double scalar) {
-        for (int i = 0; i < vector.components.length; i++) {
-            vector.components[i] = vector.components[i] * scalar;
+    public static Vector getMultiplication(Vector vector1, Vector vector2) {
+        double[] resultMultiplication = new double[Math.max(vector1.components.length, vector2.components.length)];
+        double[] multiplier1 = Arrays.copyOf(vector1.components, Math.max(vector1.components.length, vector2.components.length));
+        double[] multiplier2 = Arrays.copyOf(vector2.components, Math.max(vector1.components.length, vector2.components.length));
+        for (int i = 0; i < Math.max(vector1.components.length, vector2.components.length); i++) {
+            resultMultiplication[i] = multiplier1[i] * multiplier2[i];
         }
-        return new Vector(vector.components);
+        return new Vector(resultMultiplication);
     }
 
     @Override
