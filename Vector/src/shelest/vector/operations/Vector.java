@@ -37,27 +37,26 @@ public class Vector {
         this.components[index] = component;
     }
 
-    public static int getSize(Vector vector) {
-        return vector.components.length;
+    public int getSize() {
+        return this.components.length;
     }
 
     @Override
     public String toString() {
-        String line = Arrays.toString(this.components);
-        line = line.replace("[", "{");
-        line = line.replace("]", "}");
-        return line;
+        StringBuilder line = new StringBuilder("{");
+        for (double component : this.components) {
+            line.append(component).append(", ");
+        }
+        line.delete(line.length() - 2, line.length());
+        line.append("}");
+        return line.toString();
     }
 
     public Vector getAddition(Vector vector) {
-        int minLength;
-        if (this.components.length >= vector.components.length) {
-            minLength = vector.components.length;
-        } else {
-            minLength = this.components.length;
+        if (this.components.length < vector.components.length) {
             this.components = Arrays.copyOf(this.components, vector.components.length);
         }
-        for (int i = 0; i < minLength; i++) {
+        for (int i = 0; i < vector.components.length; i++) {
             this.components[i] = this.components[i] + vector.components[i];
         }
         return this;
@@ -84,12 +83,39 @@ public class Vector {
         return getMultiplicationByScalar(-1);
     }
 
-    public static double getLength(Vector vector) {
+    public double getLength() {
         double sum = 0;
-        for (double component : vector.components) {
+        for (double component : this.components) {
             sum = sum + Math.pow(component, 2);
         }
         return Math.sqrt(sum);
+    }
+
+    public static Vector getAddition(Vector vector1, Vector vector2) {
+        if (vector1.components.length < vector2.components.length) {
+            vector1.components = Arrays.copyOf(vector1.components, vector2.components.length);
+        }
+        for (int i = 0; i < vector2.components.length; i++) {
+            vector1.components[i] = vector1.components[i] + vector2.components[i];
+        }
+        return new Vector(vector1.components);
+    }
+
+    public static Vector getSubtraction(Vector vector1,Vector vector2) {
+        if (vector1.components.length < vector2.components.length) {
+            vector1.components = Arrays.copyOf(vector1.components, vector2.components.length);
+        }
+        for (int i = 0; i < vector2.components.length; i++) {
+            vector1.components[i] = vector1.components[i] - vector2.components[i];
+        }
+        return new Vector(vector1.components);
+    }
+
+    public static Vector getMultiplicationByScalar(Vector vector, double scalar) {
+        for (int i = 0; i < vector.components.length; i++) {
+            vector.components[i] = vector.components[i] * scalar;
+        }
+        return new Vector(vector.components);
     }
 
     @Override

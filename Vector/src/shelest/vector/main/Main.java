@@ -38,6 +38,9 @@ public class Main {
         Vector vector7 = new Vector(8);
         Vector vector8 = new Vector(vector6);
         Vector vector9 = new Vector(dimension, componentsArray1);
+        Vector vector10 = new Vector(componentsArray1);
+        Vector vector11 = new Vector(componentsArray2);
+        Vector vector12 = new Vector(componentsArray3);
 
         System.out.println("1. " + vector1.toString());
         System.out.println("2. " + vector2.toString());
@@ -48,13 +51,20 @@ public class Main {
         System.out.println("7. " + vector7.toString());
         System.out.println("8. " + vector8.toString());
         System.out.println("9. " + vector9.toString());
+        System.out.println("10. " + vector10.toString());
+        System.out.println("11. " + vector11.toString());
+        System.out.println("12. " + vector12.toString());
 
-        System.out.println(System.lineSeparator() + "Размерность первого вектора составляет: " + Vector.getSize(vector1));
+
+        System.out.println(System.lineSeparator() + "Размерность первого вектора составляет: " + vector1.getSize());
         System.out.println("Результат сложения первого и второго векторов: " + vector1.getAddition(vector2).toString());
         System.out.println("Результат разности второго и третьего векторов: " + vector2.getSubtraction(vector3).toString());
-        System.out.println("Результат умножения третьего вектора на 2: " + vector3.getMultiplicationByScalar(scalar).toString());
+        System.out.println("Результат умножения третьего вектора на скаляр: " + vector3.getMultiplicationByScalar(scalar).toString());
+        System.out.println("Результат сложения десятого и одиннадцатого векторов статическим методом: " + Vector.getAddition(vector10, vector11).toString());
+        System.out.println("Результат разности одиннадцатого и двенадцатого векторов статическим методом: " + Vector.getSubtraction(vector11, vector12).toString());
+        System.out.println("Результат умножения двенадцатого вектора на скаляр статическим методом: " + Vector.getMultiplicationByScalar(vector12, scalar).toString());
         System.out.println("Результат разворота четвертого вектора: " + vector4.getTurn().toString());
-        System.out.println("Длина пятого вектора: " + Vector.getLength(vector5));
+        System.out.println("Длина пятого вектора: " + vector5.getLength());
         vector5.setComponent(index, addedComponent);
         System.out.println("Результат замены компонента пятого вектора: " + vector5.toString());
         System.out.println("Результат равенства шестого и восьмого векторов: " + vector6.equals(vector8));
