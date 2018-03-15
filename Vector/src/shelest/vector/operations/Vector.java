@@ -29,7 +29,7 @@ public class Vector {
 
     }
 
-    public double getCompanent(int index) {
+    public double getComponent(int index) {
         return this.components[index];
     }
 
@@ -102,11 +102,12 @@ public class Vector {
     }
 
     public static double getScalarMultiplication(Vector vector1, Vector vector2) {
-        double resultMultiplication = 0;
-        for (int i = 0; i < Math.min(vector1.components.length, vector2.components.length); i++) {
-            resultMultiplication = resultMultiplication + vector1.components[i] * vector2.components[i];
+        double resultScalarMultiplication = 0;
+        int minLength = Math.min(vector1.components.length, vector2.components.length);
+        for (int i = 0; i < minLength; i++) {
+            resultScalarMultiplication += vector1.components[i] * vector2.components[i];
         }
-        return resultMultiplication;
+        return resultScalarMultiplication;
     }
 
     @Override
