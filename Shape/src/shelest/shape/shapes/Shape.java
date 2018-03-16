@@ -1,6 +1,6 @@
-package shelest.shape.operations;
+package shelest.shape.shapes;
 
-interface Shape {
+public interface Shape {
     double getWidth();
 
     double getHeight();
@@ -8,4 +8,5 @@ interface Shape {
     double getArea();
 
     double getPerimeter();
+
 }
