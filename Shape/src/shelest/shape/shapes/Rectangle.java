@@ -47,7 +47,7 @@ public class Rectangle implements Shape {
             return false;
         }
         Rectangle rectangle = (Rectangle) o;
-        return (this.width == rectangle.width & this.height == rectangle.height);
+        return (this.width == rectangle.width && this.height == rectangle.height);
     }
 
     @Override

@@ -18,11 +18,11 @@ public class Triangle implements Shape {
     }
 
     public double getWidth() {
-        return Math.max(this.x1, Math.max(this.x2, this.x3)) - Math.min(this.x1, Math.min(this.x2, this.x3));
+        return getLengthSide(x1, x2, x3);
     }
 
     public double getHeight() {
-        return Math.max(this.y1, Math.max(this.y2, this.y3)) - Math.min(this.y1, Math.min(this.y2, this.y3));
+        return getLengthSide(y1, y2, y3);
     }
 
     public double getArea() {
@@ -33,6 +33,10 @@ public class Triangle implements Shape {
         return Math.sqrt(Math.pow(this.x1 - this.x2, 2) + Math.pow(this.y1 - this.y2, 2)) +
                 Math.sqrt(Math.pow(this.x2 - this.x3, 2) + Math.pow(this.y2 - this.y3, 2)) +
                 Math.sqrt(Math.pow(this.x1 - this.x3, 2) + Math.pow(this.y1 - this.y3, 2));
+    }
+
+    private double getLengthSide(double argument1, double argument2, double argument3) {
+        return Math.max(argument1, Math.max(argument2, argument3)) - Math.min(argument1, Math.min(argument2, argument3));
     }
 
     @Override
@@ -57,9 +61,9 @@ public class Triangle implements Shape {
             return false;
         }
         Triangle triangle = (Triangle) o;
-        return (this.x1 == triangle.x1 & this.y1 == triangle.y1 &
-                this.x2 == triangle.x2 & this.y2 == triangle.y2 &
-                this.x3 == triangle.x3 & this.y3 == triangle.y3);
+        return (this.x1 == triangle.x1 && this.y1 == triangle.y1 &
+                this.x2 == triangle.x2 && this.y2 == triangle.y2 &
+                this.x3 == triangle.x3 && this.y3 == triangle.y3);
     }
 
     @Override
