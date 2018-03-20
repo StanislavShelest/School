@@ -18,11 +18,11 @@ public class Triangle implements Shape {
     }
 
     public double getWidth() {
-        return getLengthSide(x1, x2, x3);
+        return getWidthOrHeight(this.x1, this.x2, this.x3);
     }
 
     public double getHeight() {
-        return getLengthSide(y1, y2, y3);
+        return getWidthOrHeight(this.y1, this.y2, this.y3);
     }
 
     public double getArea() {
@@ -30,14 +30,19 @@ public class Triangle implements Shape {
     }
 
     public double getPerimeter() {
-        return Math.sqrt(Math.pow(this.x1 - this.x2, 2) + Math.pow(this.y1 - this.y2, 2)) +
-                Math.sqrt(Math.pow(this.x2 - this.x3, 2) + Math.pow(this.y2 - this.y3, 2)) +
-                Math.sqrt(Math.pow(this.x1 - this.x3, 2) + Math.pow(this.y1 - this.y3, 2));
+        return getLengthSide(this.x1,this.x2,this.y1,this.y2) +
+                getLengthSide(this.x2,this.x3,this.y2,this.y3) +
+                getLengthSide(this.x1,this.x3,this.y1,this.y3);
     }
 
-    private double getLengthSide(double argument1, double argument2, double argument3) {
+    private static double getWidthOrHeight(double argument1, double argument2, double argument3) {
         return Math.max(argument1, Math.max(argument2, argument3)) - Math.min(argument1, Math.min(argument2, argument3));
     }
+
+    private static double getLengthSide(double abscissa1, double abscissa2, double ordinate1, double ordinate2){
+        return Math.sqrt(Math.pow(abscissa1 - abscissa2, 2) + Math.pow(ordinate1 - ordinate2, 2));
+    }
+
 
     @Override
     public String toString() {
