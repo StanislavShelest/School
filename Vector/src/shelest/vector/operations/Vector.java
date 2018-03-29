@@ -26,7 +26,6 @@ public class Vector {
             throw new IllegalArgumentException("Введена недопустимая размерность");
         }
         return dimension;
-
     }
 
     public double getComponent(int index) {

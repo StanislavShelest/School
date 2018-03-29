@@ -30,16 +30,16 @@ public class Triangle implements Shape {
     }
 
     public double getPerimeter() {
-        return getLengthSide(this.x1,this.x2,this.y1,this.y2) +
-                getLengthSide(this.x2,this.x3,this.y2,this.y3) +
-                getLengthSide(this.x1,this.x3,this.y1,this.y3);
+        return getSideLength(this.x1,this.x2,this.y1,this.y2) +
+                getSideLength(this.x2,this.x3,this.y2,this.y3) +
+                getSideLength(this.x1,this.x3,this.y1,this.y3);
     }
 
     private static double getWidthOrHeight(double argument1, double argument2, double argument3) {
         return Math.max(argument1, Math.max(argument2, argument3)) - Math.min(argument1, Math.min(argument2, argument3));
     }
 
-    private static double getLengthSide(double abscissa1, double abscissa2, double ordinate1, double ordinate2){
+    private static double getSideLength(double abscissa1, double abscissa2, double ordinate1, double ordinate2){
         return Math.sqrt(Math.pow(abscissa1 - abscissa2, 2) + Math.pow(ordinate1 - ordinate2, 2));
     }
 
