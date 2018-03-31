@@ -2,73 +2,113 @@ package shelest.matrix.matrix;
 
 import shelest.vector.operations.Vector;
 
-import java.util.Arrays;
-
 public class Matrix {
-    private Vector[] components;
+    private Vector[] vectorRow;
 
-    public Matrix(int lines, int columns) {
-        this.components = new Vector[lines];
-        Vector vector = new Vector(columns);
-        for (int i = 0; i < lines; i++) {
-            components[i] = vector;
+    public Matrix(int countRows, int countColumns) {
+        getExclusionUnacceptableSize(countRows);
+        getExclusionUnacceptableSize(countColumns);
+        this.vectorRow = new Vector[countRows];
+        Vector vector = new Vector(countColumns);
+        for (int i = 0; i < countRows; i++) {
+            this.vectorRow[i] = vector;
         }
     }
 
     public Matrix(Matrix matrix) {
-        this.components = matrix.components;
+        getExclusionUnacceptableSize(matrix.vectorRow.length);
+        this.vectorRow = matrix.vectorRow;
     }
 
     public Matrix(double[][] array) {
-        this.components = new Vector[array.length];
+        getExclusionUnacceptableSize(array.length);
+        this.vectorRow = new Vector[array.length];
+        int maxSizeRowArray = 0;
+        for (double[] anArray : array) {
+            maxSizeRowArray = Math.max(maxSizeRowArray, anArray.length);
+        }
         for (int i = 0; i < array.length; i++) {
-            Vector vector = new Vector(array[i]);
-            this.components[i] = vector;
+            Vector vector = new Vector(maxSizeRowArray, array[i]);
+            this.vectorRow[i] = vector;
         }
     }
 
     public Matrix(Vector[] arrayVectors) {
-        this.components = new Vector[arrayVectors.length];
-        System.arraycopy(arrayVectors, 0, this.components, 0, arrayVectors.length);
+        getExclusionUnacceptableSize(arrayVectors.length);
+        this.vectorRow = new Vector[arrayVectors.length];
+        int maxSizeVector = 0;
+        for (Vector arrayVector : arrayVectors) {
+            maxSizeVector = Math.max(maxSizeVector, arrayVector.getSize());
+        }
+        Vector vectorNull = new Vector(maxSizeVector);
+        for (int i = 0; i < arrayVectors.length; i++) {
+            this.vectorRow[i] = Vector.getAddition(vectorNull, arrayVectors[i]);
+        }
     }
 
-    public int[] getSize() {
-        int[] size = new int[2];
-        size[0] = this.components.length;
-        size[1] = this.components[0].getSize();
+    private static int getExclusionUnacceptableSize(int size) {
+        if (size <= 0) {
+            throw new IllegalArgumentException("Введен отрицательный или нулевой размер");
+        }
         return size;
     }
 
-    public void setComponent(int line, int column, double component) {
-        Vector vector = new Vector(this.components[line]);
-        vector.setComponent(column, component);
-        this.components[line] = vector;
+    private void getExclusionDimensionSizeRow(int indexRow) {
+        if (indexRow > this.vectorRow[0].getSize() || indexRow < 0) {
+            throw new IllegalArgumentException("Некорректный размер строки");
+        }
     }
 
-    public double getComponent(int line, int column) {
-        return this.components[line].getComponent(column);
+    private void getExclusionDimensionSizeColumn(int indexColumn) {
+        if (indexColumn > this.vectorRow.length || indexColumn < 0) {
+            throw new IllegalArgumentException("Некорректный размер столбца");
+        }
     }
 
-    public double[] getVectorColumn(int column) {
-        double[] vectorColumn = new double[this.components.length];
-        for (int i = 0; i < this.components.length; i++) {
-            vectorColumn[i] = this.getComponent(i, column);
+    public int getSizeRow() {
+        return this.vectorRow[0].getSize();
+    }
+
+    public int getSizeColumn() {
+        return this.vectorRow.length;
+
+    }
+
+    public void setComponent(int indexRow, int indexColumn, double component) {
+        getExclusionDimensionSizeRow(indexRow);
+        getExclusionDimensionSizeColumn(indexColumn);
+        Vector vector = new Vector(this.vectorRow[indexRow]);
+        vector.setComponent(indexColumn, component);
+        this.vectorRow[indexRow] = vector;
+    }
+
+    public double getComponent(int indexRow, int indexColumn) {
+        getExclusionDimensionSizeRow(indexRow);
+        getExclusionDimensionSizeColumn(indexColumn);
+        return this.vectorRow[indexRow].getComponent(indexColumn);
+    }
+
+    public Vector getVectorColumn(int indexRow) {
+        getExclusionDimensionSizeRow(indexRow);
+        Vector vectorColumn = new Vector(this.vectorRow.length);
+        for (int i = 0; i < this.vectorRow.length; i++) {
+            vectorColumn.setComponent(i, this.getComponent(i, indexRow));
         }
         return vectorColumn;
     }
 
     public Matrix getTranspose() {
-        Matrix transposeMatrix = new Matrix(this.components[0].getSize(), this.components.length);
-        for (int i = 0; i < transposeMatrix.components.length; i++) {
-            for (int j = 0; j < transposeMatrix.components[i].getSize(); j++) {
-                transposeMatrix.setComponent(i, j, this.getComponent(j, i));
-            }
+        Matrix transposeMatrix = new Matrix(this.getSizeRow(), this.getSizeColumn());
+        int maxSize = Math.max(transposeMatrix.getSizeColumn(), transposeMatrix.getSizeRow());
+        for (int i = 0; i < maxSize; i++) {
+            transposeMatrix.vectorRow[i] = this.getVectorColumn(i);
         }
-        return transposeMatrix;
+        this.vectorRow = transposeMatrix.vectorRow;
+        return this;
     }
 
     public Matrix getMultiplicationByScalar(double scalar) {
-        for (Vector component : this.components) {
+        for (Vector component : this.vectorRow) {
             component.getMultiplicationByScalar(scalar);
         }
         return this;
@@ -76,7 +116,7 @@ public class Matrix {
 
     public double getDeterminant(Matrix matrix) {
         double determinant = 0;
-        int sizeLineMatrix = matrix.components[0].getSize();
+        int sizeLineMatrix = matrix.vectorRow[0].getSize();
         if (sizeLineMatrix == 2) {
             determinant = matrix.getComponent(0, 0) * matrix.getComponent(1, 1) - matrix.getComponent(1, 0) * matrix.getComponent(0, 1);
         } else {
@@ -87,14 +127,14 @@ public class Matrix {
                 } else {
                     coefficient = 1;
                 }
-                determinant += coefficient * matrix.getComponent(0, i) * getDeterminant(GetMinor(matrix, 0, i));
+                determinant += coefficient * matrix.getComponent(0, i) * getDeterminant(getMinor(matrix, 0, i));
             }
         }
         return determinant;
     }
 
-    private static Matrix GetMinor(Matrix matrix, int row, int column) {
-        int minorSize = matrix.components.length - 1;
+    private static Matrix getMinor(Matrix matrix, int row, int column) {
+        int minorSize = matrix.vectorRow.length - 1;
         Matrix minor = new Matrix(minorSize, minorSize);
         int exceptionRow = 0;
         for (int i = 0; i <= minorSize; i++) {
@@ -116,7 +156,7 @@ public class Matrix {
 
     public Matrix getMultiplicationByVector(Vector vector) {
         int vectorSize = vector.getSize();
-        for (Vector component : this.components) {
+        for (Vector component : this.vectorRow) {
             for (int j = 0; j < vectorSize; j++) {
                 component.setComponent(j, component.getComponent(j) * vector.getComponent(j));
             }
@@ -125,23 +165,17 @@ public class Matrix {
     }
 
     public Matrix getAddition(Matrix matrix) {
-        int rowSize = this.components.length;
-        for (int i = 0; i < rowSize; i++) {
-            int columnSize = this.components[i].getSize();
-            for (int j = 0; j < columnSize; j++) {
-                this.setComponent(i, j, this.getComponent(i, j) + matrix.getComponent(i, j));
-            }
+        int sizeColumn = this.getSizeColumn();
+        for (int i = 0; i < sizeColumn; i++) {
+            this.vectorRow[i] = Vector.getAddition(this.vectorRow[i], matrix.vectorRow[i]);
         }
         return this;
     }
 
     public Matrix getSubtraction(Matrix matrix) {
-        int rowSize = this.components.length;
-        for (int i = 0; i < rowSize; i++) {
-            int columnSize = this.components[i].getSize();
-            for (int j = 0; j < columnSize; j++) {
-                this.setComponent(i, j, this.getComponent(i, j) - matrix.getComponent(i, j));
-            }
+        int sizeColumn = this.getSizeColumn();
+        for (int i = 0; i < sizeColumn; i++) {
+            this.vectorRow[i] = Vector.getSubtraction(this.vectorRow[i], matrix.vectorRow[i]);
         }
         return this;
     }
@@ -157,12 +191,20 @@ public class Matrix {
     }
 
     public static Matrix getMultiplication(Matrix matrix1, Matrix matrix2) {
-        Matrix resultMultiplication = new Matrix(matrix1);
-        int rowSize = resultMultiplication.components.length;
-        for (int i = 0; i < rowSize; i++) {
-            int columnSize = resultMultiplication.components[i].getSize();
-            for (int j = 0; j < columnSize; j++) {
-                resultMultiplication.setComponent(i, j, resultMultiplication.getComponent(i, j) * matrix2.getComponent(i, j));
+        int sizeColumn1 = matrix1.getSizeColumn();
+        int sizeRow1 = matrix1.getSizeRow();
+        int sizeColumn2 = matrix2.getSizeColumn();
+        int sizeRow2 = matrix2.getSizeRow();
+        Matrix resultMultiplication = new Matrix(Math.max(sizeColumn1, sizeColumn2), Math.max(sizeRow1, sizeRow2));
+        for (int i = 0; i < sizeColumn1; i++) {
+            for (int j = 0; j < sizeRow1; j++) {
+                resultMultiplication.setComponent(i, j, matrix1.vectorRow[i].getComponent(j));
+            }
+        }
+        for (int i = 0; i < sizeColumn2; i++) {
+            for (int j = 0; j < sizeRow2; j++) {
+                double componentsMultiplication = resultMultiplication.vectorRow[i].getComponent(j) * matrix2.vectorRow[i].getComponent(j);
+                resultMultiplication.setComponent(i, j, componentsMultiplication);
             }
         }
         return resultMultiplication;
@@ -171,7 +213,7 @@ public class Matrix {
     @Override
     public String toString() {
         StringBuilder line = new StringBuilder("{");
-        for (Vector component : this.components) {
+        for (Vector component : this.vectorRow) {
             line.append(component.toString());
             line.append(",");
         }
