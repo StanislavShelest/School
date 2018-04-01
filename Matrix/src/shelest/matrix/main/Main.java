@@ -10,9 +10,9 @@ public class Main {
         Matrix matrix1 = new Matrix(5, 6);
         System.out.println("Матрица номер 1:" + matrix1.toString());
 
-        System.out.println("Размер строки первой матрицы: " + matrix1.getSizeRow());
+        System.out.println("Размер строки первой матрицы: " + matrix1.getCountColumn());
 
-        System.out.println("Размер столбца первой матрицы: " + matrix1.getSizeColumn());
+        System.out.println("Размер столбца первой матрицы: " + matrix1.getCountRow());
 
         System.out.print("Введите номер строки матрицы для ввода значения: ");
         Scanner scanner1 = new Scanner(System.in);
@@ -108,14 +108,14 @@ public class Main {
 
         System.out.println("Результат сложения статическим методом матриц 10 и 11: " + Matrix.getAddition(matrix10, matrix11).toString());
 
-        double[][] arrayTwoDimensional9 = {{3, 4, 5,}, {4, 3, 2, 1}, {2, 3, 4}};
+        double[][] arrayTwoDimensional9 = {{3, 4, 5,}, {4, 3, 2}, {2, 3, 4},{3,5,9}};
         Matrix matrix12 = new Matrix(arrayTwoDimensional9);
         System.out.println(System.lineSeparator() + "Матрица номер 11:" + matrix11.toString());
         System.out.println("Матрица номер 12:" + matrix12.toString());
 
         System.out.println("Результат вычитания статическим методом из матрицы 11 матрицы 12: " + Matrix.getSubtraction(matrix11, matrix12).toString());
 
-        double[][] arrayTwoDimensional10 = {{8, 7, 5, 7, 9}, {6, 4, 3}, {6, 5, 4}, {2, 1}};
+        double[][] arrayTwoDimensional10 = {{8, 7, 5, 7}, {6, 4, 3,4}, {6, 5, 4,8}};
         Matrix matrix13 = new Matrix(arrayTwoDimensional10);
         System.out.println(System.lineSeparator() + "Матрица номер 12:" + matrix12.toString());
         System.out.println("Матрица номер 13:" + matrix13.toString());
