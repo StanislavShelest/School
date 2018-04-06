@@ -10,9 +10,9 @@ public class Main {
         Matrix matrix1 = new Matrix(5, 6);
         System.out.println("Матрица номер 1:" + matrix1.toString());
 
-        System.out.println("Размер строки первой матрицы: " + matrix1.getCountColumn());
+        System.out.println("Размер строки первой матрицы: " + matrix1.getColumnsCount());
 
-        System.out.println("Размер столбца первой матрицы: " + matrix1.getCountRow());
+        System.out.println("Размер столбца первой матрицы: " + matrix1.getRowsCount());
 
         System.out.print("Введите номер строки матрицы для ввода значения: ");
         Scanner scanner1 = new Scanner(System.in);
@@ -35,7 +35,7 @@ public class Main {
         Matrix matrix2 = new Matrix(matrix1);
         System.out.println(System.lineSeparator() + "Матрица номер 2:" + matrix2.toString());
 
-        double[][] arrayTwoDimensional1 = {{2, 3, 4}, {5, 6, 7}, {12, 11, 13, 12}};
+        double[][] arrayTwoDimensional1 = {{2, 3, 4}, {5, 6, 7}, {12, 11, 13, 12}, {8, 5, 3, 14}};
         Matrix matrix3 = new Matrix(arrayTwoDimensional1);
         System.out.println(System.lineSeparator() + "Матрица номер 3:" + matrix3.toString());
 
@@ -70,12 +70,12 @@ public class Main {
         Matrix matrix5 = new Matrix(arrayTwoDimensional2);
         System.out.println(System.lineSeparator() + "Матрица номер 5:" + matrix5.toString());
 
-        System.out.println("Определитель матрицы номер 5 равен: " + matrix5.getDeterminant(matrix5));
+        System.out.println("Определитель матрицы номер 5 равен: " + matrix5.getDeterminant());
 
-        double[] array4 = {2, 3, 4};
+        double[] array4 = {2, 3, 4, 2};
         Vector vector4 = new Vector(array4);
 
-        double[][] arrayTwoDimensional3 = {{23, 43, 65, 78}, {12, 54, 76, 43}, {78, 98, 65, 23, 26}};
+        double[][] arrayTwoDimensional3 = {{23, 43, 65, 78}, {12, 54, 76, 43}, {78, 98, 65, 23}};
         Matrix matrix6 = new Matrix(arrayTwoDimensional3);
         System.out.println(System.lineSeparator() + "Матрица номер 6:" + matrix6.toString());
 
@@ -98,24 +98,24 @@ public class Main {
 
         System.out.println("Результат вычитания из матрицы 8 матрицы 9: " + matrix8.getSubtraction(matrix9).toString());
 
-        double[][] arrayTwoDimensional7 = {{3, 4, 5,}, {4, 3, 2, 1}, {2, 3, 4}};
+        double[][] arrayTwoDimensional7 = {{3, 4, 5, 1}, {4, 3, 2, 1}, {2, 3, 4, 7}};
         Matrix matrix10 = new Matrix(arrayTwoDimensional7);
         System.out.println(System.lineSeparator() + "Матрица номер 10:" + matrix10.toString());
 
-        double[][] arrayTwoDimensional8 = {{8, 7, 5}, {6, 4, 3, 2}, {6, 5, 4}};
+        double[][] arrayTwoDimensional8 = {{8, 7, 5, 2}, {6, 4, 3, 2}, {6, 5, 4, 0}};
         Matrix matrix11 = new Matrix(arrayTwoDimensional8);
         System.out.println("Матрица номер 11:" + matrix11.toString());
 
         System.out.println("Результат сложения статическим методом матриц 10 и 11: " + Matrix.getAddition(matrix10, matrix11).toString());
 
-        double[][] arrayTwoDimensional9 = {{3, 4, 5,}, {4, 3, 2}, {2, 3, 4},{3,5,9}};
+        double[][] arrayTwoDimensional9 = {{3, 4, 5, 1}, {4, 3, 2, 1}, {2, 3, 4, 7}};
         Matrix matrix12 = new Matrix(arrayTwoDimensional9);
         System.out.println(System.lineSeparator() + "Матрица номер 11:" + matrix11.toString());
         System.out.println("Матрица номер 12:" + matrix12.toString());
 
         System.out.println("Результат вычитания статическим методом из матрицы 11 матрицы 12: " + Matrix.getSubtraction(matrix11, matrix12).toString());
 
-        double[][] arrayTwoDimensional10 = {{8, 7, 5, 7}, {6, 4, 3,4}, {6, 5, 4,8}};
+        double[][] arrayTwoDimensional10 = {{8, 7, 5}, {6, 4, 3}, {3, 6, 9}, {2, 0, 7}};
         Matrix matrix13 = new Matrix(arrayTwoDimensional10);
         System.out.println(System.lineSeparator() + "Матрица номер 12:" + matrix12.toString());
         System.out.println("Матрица номер 13:" + matrix13.toString());
