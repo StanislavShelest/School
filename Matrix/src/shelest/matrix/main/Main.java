@@ -27,7 +27,17 @@ public class Main {
         double elementEnter = scanner3.nextDouble();
 
         matrix1.setComponent(numberRowEnter, numberColumnEnter, elementEnter);
-        System.out.println("Матрица номер 1 после измения значения: " + matrix1.toString());
+        System.out.println("Матрица номер 1 после изменения значения: " + matrix1.toString());
+
+        System.out.print("Введите номер строки для ее замены: ");
+        Scanner scanner4 = new Scanner(System.in);
+        int numberRow = scanner4.nextInt();
+
+        double[] array1 = {12, 13, 14, 15, 16, 17};
+        Vector vector1 = new Vector(array1);
+
+        matrix1.setRow(numberRow, vector1);
+        System.out.println("Матрица номер 1 после изменения строки: " + matrix1.toString());
 
         System.out.println("В матрице номер 1 в строке номер " + numberRowEnter + " элементом под номером " +
                 numberColumnEnter + " является: " + matrix1.getComponent(numberRowEnter, numberColumnEnter));
@@ -35,34 +45,40 @@ public class Main {
         Matrix matrix2 = new Matrix(matrix1);
         System.out.println(System.lineSeparator() + "Матрица номер 2:" + matrix2.toString());
 
-        double[][] arrayTwoDimensional1 = {{2, 3, 4}, {5, 6, 7}, {12, 11, 13, 12}, {8, 5, 3, 14}};
+        double[][] arrayTwoDimensional1 = {{2, 3, 4}, {12, 11, 13, 12}, {8, 5, 3, 14}};
         Matrix matrix3 = new Matrix(arrayTwoDimensional1);
         System.out.println(System.lineSeparator() + "Матрица номер 3:" + matrix3.toString());
 
-        System.out.print("Введите столбец для создания вектора-столбца: ");
-        Scanner scanner4 = new Scanner(System.in);
-        int numberColumn = scanner4.nextInt();
+        System.out.print("Введите номер столбца для получения вектора-столбца: ");
+        Scanner scanner5 = new Scanner(System.in);
+        int numberColumn = scanner5.nextInt();
 
-        System.out.println("Вектор-столбец под номером " + numberColumn + " матрицы номер 3: " + matrix3.getVectorColumn(numberColumn).toString());
+        System.out.println("Вектор-столбец под номером " + numberColumn + " матрицы номер 3: " + matrix3.getColumn(numberColumn).toString());
+
+        System.out.print("Введите номер строки для ее вывода: ");
+        Scanner scanner6 = new Scanner(System.in);
+        int numberRowOutput = scanner6.nextInt();
+
+        System.out.println("Строка под номером " + numberRowOutput + " матрицы номер 3: " + matrix3.getRow(numberRowOutput).toString());
 
         System.out.println("Матрица номер 3 после транспонирования: " + matrix3.getTranspose().toString());
 
-        double[] array1 = {23, 45, 67};
-        double[] array2 = {43, 54};
-        double[] array3 = {98, 12, 32};
-        Vector vector1 = new Vector(array1);
+        double[] array2 = {23, 45, 67};
+        double[] array3 = {43, 54};
+        double[] array4 = {98, 12, 32};
         Vector vector2 = new Vector(array2);
         Vector vector3 = new Vector(array3);
+        Vector vector4 = new Vector(array4);
         Vector[] arrayVectors = new Vector[3];
-        arrayVectors[0] = vector1;
-        arrayVectors[1] = vector2;
-        arrayVectors[2] = vector3;
+        arrayVectors[0] = vector2;
+        arrayVectors[1] = vector3;
+        arrayVectors[2] = vector4;
         Matrix matrix4 = new Matrix(arrayVectors);
         System.out.println(System.lineSeparator() + "Матрица номер 4:" + matrix4.toString());
 
         System.out.print("Введите скаляр для умножения матрицы: ");
-        Scanner scanner5 = new Scanner(System.in);
-        double scalar = scanner5.nextDouble();
+        Scanner scanner7 = new Scanner(System.in);
+        double scalar = scanner7.nextDouble();
 
         System.out.println("Матрица номер 4 после умножения на скаляр " + scalar + ": " + matrix4.getMultiplicationByScalar(scalar).toString());
 
@@ -72,14 +88,14 @@ public class Main {
 
         System.out.println("Определитель матрицы номер 5 равен: " + matrix5.getDeterminant());
 
-        double[] array4 = {2, 3, 4, 2};
-        Vector vector4 = new Vector(array4);
+        double[] array5 = {2, 3, 4, 2};
+        Vector vector5 = new Vector(array5);
 
         double[][] arrayTwoDimensional3 = {{23, 43, 65, 78}, {12, 54, 76, 43}, {78, 98, 65, 23}};
         Matrix matrix6 = new Matrix(arrayTwoDimensional3);
         System.out.println(System.lineSeparator() + "Матрица номер 6:" + matrix6.toString());
 
-        System.out.println("Результат произведения матрицы номер 6 на вектор " + vector4.toString() + ": " + matrix6.getMultiplicationByVector(vector4));
+        System.out.println("Результат произведения матрицы номер 6 на вектор " + vector5.toString() + ": " + matrix6.getMultiplicationByVector(vector5));
 
         double[][] arrayTwoDimensional4 = {{2, 5, 6,}, {5, 7, 9, 10, 12}, {7, 5, 4}};
         Matrix matrix7 = new Matrix(arrayTwoDimensional4);
