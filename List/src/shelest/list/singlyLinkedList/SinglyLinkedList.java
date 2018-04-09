@@ -36,4 +36,5 @@ public class SinglyLinkedList<T> {
         listElement.setData(data);
         return oldData;
     }
+    
 }

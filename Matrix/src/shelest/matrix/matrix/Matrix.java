@@ -18,10 +18,10 @@ public class Matrix {
 
     public Matrix(Matrix matrix) {
         int rowsCount = matrix.rows.length;
-        int columnsCount = matrix.rows[0].getSize();
+        int columnsCount = matrix.getColumnsCount();
         this.rows = new Vector[rowsCount];
         for (int i = 0; i < rowsCount; i++) {
-            Vector vector = new Vector(matrix.rows[i].getSize());
+            Vector vector = new Vector(columnsCount);
             this.rows[i] = vector;
         }
         for (int i = 0; i < rowsCount; i++) {
@@ -73,13 +73,13 @@ public class Matrix {
     }
 
     public static Matrix getAddition(Matrix matrix1, Matrix matrix2) {
-        checkIncorrectMatrixSizes(matrix1.rows.length, matrix1.rows[0].getSize(), matrix2.rows.length, matrix2.rows[0].getSize());
+        checkIncorrectMatrixSizes(matrix1.rows.length, matrix1.getColumnsCount(), matrix2.rows.length, matrix2.getColumnsCount());
         Matrix resultAddition = new Matrix(matrix1);
         return resultAddition.getAddition(matrix2);
     }
 
     public static Matrix getSubtraction(Matrix matrix1, Matrix matrix2) {
-        checkIncorrectMatrixSizes(matrix1.rows.length, matrix1.rows[0].getSize(), matrix2.rows.length, matrix2.rows[0].getSize());
+        checkIncorrectMatrixSizes(matrix1.rows.length, matrix1.getColumnsCount(), matrix2.rows.length, matrix2.getColumnsCount());
         Matrix resultSubtraction = new Matrix(matrix1);
         return resultSubtraction.getSubtraction(matrix2);
     }
@@ -87,8 +87,8 @@ public class Matrix {
     public static Matrix getMultiplication(Matrix matrix1, Matrix matrix2) {
         int rowsCount1 = matrix1.rows.length;
         int rowsCount2 = matrix2.rows.length;
-        int columnsCount1 = matrix1.rows[0].getSize();
-        int columnsCount2 = matrix2.rows[0].getSize();
+        int columnsCount1 = matrix1.getColumnsCount();
+        int columnsCount2 = matrix2.getColumnsCount();
 
         if (columnsCount1 != rowsCount2) {
             throw new IllegalArgumentException("Недопустимые размеры матриц");
@@ -115,7 +115,7 @@ public class Matrix {
     }
 
     private void checkIncorrectColumnIndex(int columnIndex) {
-        if (columnIndex >= this.rows[0].getSize() || columnIndex < 0) {
+        if (columnIndex >= this.getColumnsCount() || columnIndex < 0) {
             throw new IllegalArgumentException("Введен некорректный индекс столбца");
         }
     }
@@ -142,7 +142,7 @@ public class Matrix {
 
     public void setRow(int rowIndex, Vector row) {
         checkIncorrectRowIndex(rowIndex);
-        if (row.getSize() != this.rows[0].getSize()) {
+        if (row.getSize() != this.getColumnsCount()) {
             throw new IllegalArgumentException("Размер переданной строки не совпадает с размерностью матрицы");
         }
         this.rows[rowIndex] = row;
@@ -164,7 +164,7 @@ public class Matrix {
     }
 
     public Matrix getTranspose() {
-        int columnsCount = this.rows[0].getSize();
+        int columnsCount = this.getColumnsCount();
         Vector[] arrayTranspose = new Vector[columnsCount];
 
         for (int i = 0; i < columnsCount; i++) {
@@ -183,24 +183,28 @@ public class Matrix {
 
     public double getDeterminant() {
         int rowsCount = this.rows.length;
-        int columnsCount = this.rows[0].getSize();
+        int columnsCount = this.getColumnsCount();
 
         if (rowsCount != columnsCount) {
             throw new IllegalArgumentException("Введена неквадратная матрица");
         }
 
         double determinant = 0;
-        if (columnsCount == 2) {
-            determinant = this.getComponent(0, 0) * this.getComponent(1, 1) - this.getComponent(1, 0) * this.getComponent(0, 1);
+        if (columnsCount == 1) {
+            determinant = this.getComponent(0, 0);
         } else {
-            int coefficient;
-            for (int i = 0; i < columnsCount; i++) {
-                if (i % 2 == 1) {
-                    coefficient = -1;
-                } else {
-                    coefficient = 1;
+            if (columnsCount == 2) {
+                determinant = this.getComponent(0, 0) * this.getComponent(1, 1) - this.getComponent(1, 0) * this.getComponent(0, 1);
+            } else {
+                int coefficient;
+                for (int i = 0; i < columnsCount; i++) {
+                    if (i % 2 == 1) {
+                        coefficient = -1;
+                    } else {
+                        coefficient = 1;
+                    }
+                    determinant += coefficient * this.getComponent(0, i) * getMinor(0, i).getDeterminant();
                 }
-                determinant += coefficient * this.getComponent(0, i) * getMinor(0, i).getDeterminant();
             }
         }
         return determinant;
@@ -233,9 +237,9 @@ public class Matrix {
 
     public Vector getMultiplicationByVector(Vector vector) {
         int rowsCount = this.rows.length;
-        int columnsCount = this.rows[0].getSize();
+        int columnsCount = this.getColumnsCount();
 
-        if (columnsCount != vector.getSize()){
+        if (columnsCount != vector.getSize()) {
             throw new IllegalArgumentException("Количество элементов вектора не соответсвует количеству столбцов матрицы");
         }
 
@@ -250,7 +254,7 @@ public class Matrix {
     }
 
     public Matrix getAddition(Matrix matrix) {
-        checkIncorrectMatrixSizes(this.rows.length, this.rows[0].getSize(), matrix.rows.length, matrix.rows[0].getSize());
+        checkIncorrectMatrixSizes(this.rows.length, this.getColumnsCount(), matrix.rows.length, matrix.getColumnsCount());
         int rowsCount = this.rows.length;
         for (int i = 0; i < rowsCount; i++) {
             this.rows[i] = this.rows[i].getAddition(matrix.rows[i]);
@@ -259,7 +263,7 @@ public class Matrix {
     }
 
     public Matrix getSubtraction(Matrix matrix) {
-        checkIncorrectMatrixSizes(this.rows.length, this.rows[0].getSize(), matrix.rows.length, matrix.rows[0].getSize());
+        checkIncorrectMatrixSizes(this.rows.length, this.getColumnsCount(), matrix.rows.length, matrix.getColumnsCount());
         int rowsCount = this.rows.length;
         for (int i = 0; i < rowsCount; i++) {
             this.rows[i] = this.rows[i].getSubtraction(matrix.rows[i]);
@@ -274,7 +278,7 @@ public class Matrix {
             line.append(vector.toString());
             line.append(",");
         }
-        line.delete(line.length() - 2, line.length());
+        line.delete(line.length() - 1, line.length());
         line.append("}");
         return line.toString();
     }
