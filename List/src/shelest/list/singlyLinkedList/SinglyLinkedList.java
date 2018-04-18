@@ -1,5 +1,7 @@
 package shelest.list.singlyLinkedList;
 
+import java.util.NoSuchElementException;
+
 public class SinglyLinkedList<T> {
     private int listLength;
     private ListElement<T> head;
@@ -11,8 +13,8 @@ public class SinglyLinkedList<T> {
     }
 
     private void checkEmptinessList() {
-        if (head.getData() == null && head.getNext() == null) {
-            throw new NullPointerException("Список пуст");
+        if (listLength == 0) {
+            throw new NoSuchElementException("Список пуст");
         }
     }
 
@@ -94,6 +96,13 @@ public class SinglyLinkedList<T> {
                     listLength--;
                     continue;
                 }
+            } else {
+                if (data == null) {
+                    element.setNext(element.getNext().getNext());
+                    resultDeletion = true;
+                    listLength--;
+                    continue;
+                }
             }
             element = element.getNext();
         }
@@ -126,34 +135,39 @@ public class SinglyLinkedList<T> {
     }
 
     public void copyList(SinglyLinkedList<T> copy) {
-        ListElement<T> listElementPrimary = this.head;
-        ListElement<T> listElementPrevious = new ListElement<>(this.head.getData());
-        copy.head = listElementPrevious;
-        copy.listLength = 1;
-        for (int i = 0; i < this.listLength - 1; i++) {
-            listElementPrimary = listElementPrimary.getNext();
-            ListElement<T> listElement = new ListElement<>(listElementPrimary.getData());
-            listElementPrevious.setNext(listElement);
-            listElementPrevious = listElementPrevious.getNext();
-            copy.listLength++;
+        if (this.listLength != 0) {
+            ListElement<T> listElementPrimary = this.head;
+            ListElement<T> listElementPrevious = new ListElement<>(this.head.getData());
+            copy.head = listElementPrevious;
+            for (int i = 0; i < this.listLength - 1; i++) {
+                listElementPrimary = listElementPrimary.getNext();
+                ListElement<T> listElement = new ListElement<>(listElementPrimary.getData());
+                listElementPrevious.setNext(listElement);
+                listElementPrevious = listElementPrevious.getNext();
+            }
+            copy.listLength = this.listLength;
         }
     }
 
     @Override
     public String toString() {
         ListElement<T> element = head;
-        StringBuilder line = new StringBuilder("{");
-        for (int i = 0; i < listLength; i++) {
-            if (element.getData() == null) {
-                line.append("null,");
-            } else {
-                line.append(element.getData().toString());
-                line.append(",");
+        StringBuilder line = new StringBuilder();
+        if (this.listLength != 0) {
+            line.append("{");
+            for (int i = 0; i < listLength; i++) {
+                if (element.getData() == null) {
+                    line.append("null,");
+                } else {
+                    line.append(element.getData().toString());
+                    line.append(",");
+                }
+                element = element.getNext();
             }
-            element = element.getNext();
+            line.delete(line.length() - 1, line.length());
+            line.append("}");
         }
-        line.delete(line.length() - 1, line.length());
-        line.append("}");
         return line.toString();
+
     }
 }

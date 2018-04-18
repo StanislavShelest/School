@@ -65,7 +65,7 @@ public class Main {
 
         System.out.print(System.lineSeparator() + "Введите целое число для поиска по списку: ");
         Scanner scanner8 = new Scanner(System.in);
-        int number4 = scanner8.nextInt();
+        Integer number4 = scanner8.nextInt();
 
         System.out.println("Результат удаления: " + list1.delElementByData(number4));
         System.out.println("Список номер 1 после удаления значения: " + list1.toString());
