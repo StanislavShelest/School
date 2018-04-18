@@ -1,14 +1,18 @@
 package shelest.list.singlyLinkedList;
 
-import shelest.list.listElement.ListElement;
-
 public class SinglyLinkedList<T> {
     private int listLength;
     private ListElement<T> head;
 
     private void checkIncorrectIndex(int index) {
-        if (index < 0 || index > listLength - 1) {
-            throw new IllegalArgumentException("Введен некорректный индекс");
+        if (index < 0 || index >= listLength) {
+            throw new IndexOutOfBoundsException("Введен некорректный индекс");
+        }
+    }
+
+    private void checkEmptinessList() {
+        if (head.getData() == null && head.getNext() == null) {
+            throw new NullPointerException("Список пуст");
         }
     }
 
@@ -17,6 +21,7 @@ public class SinglyLinkedList<T> {
     }
 
     public T getFirstElement() {
+        this.checkEmptinessList();
         return head.getData();
     }
 
@@ -25,21 +30,22 @@ public class SinglyLinkedList<T> {
         listLength++;
     }
 
-    public T getElement(int index) {
-        checkIncorrectIndex(index);
+    private ListElement<T> getElement(int index) {
         ListElement<T> element = head;
         for (int i = 0; i < index; i++) {
             element = element.getNext();
         }
-        return element.getData();
+        return element;
     }
 
-    public T setElement(int index, T data) {
+    public T getData(int index) {
         checkIncorrectIndex(index);
-        ListElement<T> element = head;
-        for (int i = 0; i < index; i++) {
-            element = element.getNext();
-        }
+        return getElement(index).getData();
+    }
+
+    public T setData(int index, T data) {
+        checkIncorrectIndex(index);
+        ListElement<T> element = getElement(index);
         T oldData = element.getData();
         element.setData(data);
         return oldData;
@@ -47,15 +53,12 @@ public class SinglyLinkedList<T> {
 
     public T delElement(int index) {
         checkIncorrectIndex(index);
-        ListElement<T> element = head;
         T dataDeleted;
         if (index == 0) {
             dataDeleted = head.getData();
             head = head.getNext();
         } else {
-            for (int i = 0; i < index - 1; i++) {
-                element = element.getNext();
-            }
+            ListElement<T> element = getElement(index - 1);
             dataDeleted = element.getNext().getData();
             element.setNext(element.getNext().getNext());
         }
@@ -65,16 +68,12 @@ public class SinglyLinkedList<T> {
 
     public void addElement(int index, T data) {
         if (index < 0 || index > listLength) {
-            throw new IllegalArgumentException("Введен некорректный индекс");
+            throw new IndexOutOfBoundsException("Введен некорректный индекс");
         }
-
-        ListElement<T> element = head;
         if (index == 0) {
             head = new ListElement<>(data, head);
         } else {
-            for (int i = 0; i < index - 1; i++) {
-                element = element.getNext();
-            }
+            ListElement<T> element = getElement(index - 1);
             ListElement<T> elementAdded = new ListElement<>(data);
             elementAdded.setNext(element.getNext());
             element.setNext(elementAdded);
@@ -82,27 +81,28 @@ public class SinglyLinkedList<T> {
         listLength++;
     }
 
-    public boolean delData(T data) {
+    public boolean delElementByData(T data) {
         boolean resultDeletion = false;
+        addFirstElement(null);
         ListElement<T> element = head;
-        if (head.getData().equals(data)) {
-            head = head.getNext();
-            resultDeletion = true;
-            listLength--;
-        } else {
-            for (int i = 0; i < listLength - 1; i++) {
+        int listLengthPrimary = listLength;
+        for (int i = 0; i < listLengthPrimary - 1; i++) {
+            if (element.getNext().getData() != null) {
                 if (element.getNext().getData().equals(data)) {
                     element.setNext(element.getNext().getNext());
                     resultDeletion = true;
                     listLength--;
+                    continue;
                 }
-                element = element.getNext();
             }
+            element = element.getNext();
         }
+        delFirstElement();
         return resultDeletion;
     }
 
     public T delFirstElement() {
+        this.checkEmptinessList();
         T dataDeleted = head.getData();
         head = head.getNext();
         listLength--;
@@ -126,16 +126,16 @@ public class SinglyLinkedList<T> {
     }
 
     public void copyList(SinglyLinkedList<T> copy) {
-        ListElement<T> elementPrimaryList = this.head;
-        while (elementPrimaryList.getNext() != null) {
-            elementPrimaryList = elementPrimaryList.getNext();
-        }
-        copy.head = elementPrimaryList;
+        ListElement<T> listElementPrimary = this.head;
+        ListElement<T> listElementPrevious = new ListElement<>(this.head.getData());
+        copy.head = listElementPrevious;
         copy.listLength = 1;
-        elementPrimaryList = this.head;
         for (int i = 0; i < this.listLength - 1; i++) {
-            copy.addElement(i, elementPrimaryList.getData());
-            elementPrimaryList = elementPrimaryList.getNext();
+            listElementPrimary = listElementPrimary.getNext();
+            ListElement<T> listElement = new ListElement<>(listElementPrimary.getData());
+            listElementPrevious.setNext(listElement);
+            listElementPrevious = listElementPrevious.getNext();
+            copy.listLength++;
         }
     }
 
@@ -144,8 +144,12 @@ public class SinglyLinkedList<T> {
         ListElement<T> element = head;
         StringBuilder line = new StringBuilder("{");
         for (int i = 0; i < listLength; i++) {
-            line.append(element.getData().toString());
-            line.append(",");
+            if (element.getData() == null) {
+                line.append("null,");
+            } else {
+                line.append(element.getData().toString());
+                line.append(",");
+            }
             element = element.getNext();
         }
         line.delete(line.length() - 1, line.length());

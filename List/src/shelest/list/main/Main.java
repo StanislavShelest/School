@@ -21,7 +21,7 @@ public class Main {
         System.out.print(System.lineSeparator() + "Введите индекс: ");
         Scanner scanner1 = new Scanner(System.in);
         int index1 = scanner1.nextInt();
-        System.out.println("Элемент по индексу " + index1 + " равен: " + list1.getElement(index1));
+        System.out.println("Элемент по индексу " + index1 + " равен: " + list1.getData(index1));
 
 
         System.out.print(System.lineSeparator() + "Введите индекс для изменения значения: ");
@@ -32,14 +32,14 @@ public class Main {
         Scanner scanner3 = new Scanner(System.in);
         int number1 = scanner3.nextInt();
 
-        System.out.println("Элемент " + list1.setElement(index2, number1) + " по индексу " + index2 + " заменен на " + number1);
+        System.out.println("Элемент " + list1.setData(index2, number1) + " по индексу " + index2 + " заменен на " + number1);
         System.out.println("Список номер 1 после замены значения: " + list1.toString());
 
 
         System.out.print(System.lineSeparator() + "Введите индекс для удаления значения: ");
         Scanner scanner4 = new Scanner(System.in);
         int index3 = scanner4.nextInt();
-        System.out.println("Элемент " + list1.delElement(index3) + " по индексу " + index3 + " удален");
+        System.out.println("Элемент со значением \"" + list1.delElement(index3) + "\" по индексу " + index3 + " удален");
         System.out.println("Список номер 1 после удаления значения: " + list1.toString());
 
 
@@ -67,7 +67,7 @@ public class Main {
         Scanner scanner8 = new Scanner(System.in);
         int number4 = scanner8.nextInt();
 
-        System.out.println(System.lineSeparator() + "Результат удаления: " + list1.delData(number4));
+        System.out.println("Результат удаления: " + list1.delElementByData(number4));
         System.out.println("Список номер 1 после удаления значения: " + list1.toString());
 
 

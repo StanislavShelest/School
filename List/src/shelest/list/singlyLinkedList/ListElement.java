@@ -1,4 +1,4 @@
-package shelest.list.listElement;
+package shelest.list.singlyLinkedList;
 
 public class ListElement<T> {
     private T data;
