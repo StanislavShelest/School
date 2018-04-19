@@ -87,55 +87,25 @@ public class SinglyLinkedList<T> {
     public boolean delElementByData(T data) {
         boolean resultDeletion = false;
         if (listLength != 0) {
-            boolean headDelete = false;
-            ListElement<T> element = head;
-            int listLengthPrimary = listLength;
             if (Objects.equals(head.getData(), data)) {
-                headDelete = true;
-            }
-            for (int i = 0; i < listLengthPrimary - 1; i++) {
-                if (Objects.equals(element.getNext().getData(), data)) {
-                    element.setNext(element.getNext().getNext());
-                    resultDeletion = true;
-                    listLength--;
-                    continue;
+                delFirstElement();
+                resultDeletion = true;
+            } else {
+                ListElement<T> element = head;
+                int listLengthPrimary = listLength;
+                for (int i = 0; i < listLengthPrimary - 1; i++) {
+                    if (Objects.equals(element.getNext().getData(), data)) {
+                        element.setNext(element.getNext().getNext());
+                        resultDeletion = true;
+                        listLength--;
+                        break;
+                    }
+                    element = element.getNext();
                 }
-                element = element.getNext();
-            }
-            if (headDelete) {
-                head = head.getNext();
-                listLength--;
             }
         }
         return resultDeletion;
     }
-
-    /*public boolean delElementByData(T data) {
-        boolean resultDeletion = false;
-        addFirstElement(null);
-        ListElement<T> element = head;
-        int listLengthPrimary = listLength;
-        for (int i = 0; i < listLengthPrimary - 1; i++) {
-            //if (element.getNext().getData() != null) {
-                if (element.getNext().getData().equals(data)) {
-                    element.setNext(element.getNext().getNext());
-                    resultDeletion = true;
-                    listLength--;
-                    continue;
-                }
-           // } else {
-                //if (data == null) {
-                    //element.setNext(element.getNext().getNext());
-                   // resultDeletion = true;
-                   // listLength--;
-                   // continue;
-                //}
-            //}
-            element = element.getNext();
-        }
-        delFirstElement();
-        return resultDeletion;
-    }*/
 
     public T delFirstElement() {
         this.checkEmptinessList();

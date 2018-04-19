@@ -9,8 +9,8 @@ public class Main {
         SinglyLinkedList<Integer> list1 = new SinglyLinkedList<>();
         list1.addFirstElement(null);
         list1.addFirstElement(6);
-        list1.addFirstElement(5);
-        list1.addFirstElement(3);
+        list1.addFirstElement(4);
+        list1.addFirstElement(4);
         list1.addFirstElement(3);
 
         System.out.println("Список номер 1: " + list1.toString());
