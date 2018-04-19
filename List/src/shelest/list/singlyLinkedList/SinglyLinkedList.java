@@ -1,6 +1,7 @@
 package shelest.list.singlyLinkedList;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class SinglyLinkedList<T> {
     private int listLength;
@@ -85,30 +86,56 @@ public class SinglyLinkedList<T> {
 
     public boolean delElementByData(T data) {
         boolean resultDeletion = false;
+        if (listLength != 0) {
+            boolean headDelete = false;
+            ListElement<T> element = head;
+            int listLengthPrimary = listLength;
+            if (Objects.equals(head.getData(), data)) {
+                headDelete = true;
+            }
+            for (int i = 0; i < listLengthPrimary - 1; i++) {
+                if (Objects.equals(element.getNext().getData(), data)) {
+                    element.setNext(element.getNext().getNext());
+                    resultDeletion = true;
+                    listLength--;
+                    continue;
+                }
+                element = element.getNext();
+            }
+            if (headDelete) {
+                head = head.getNext();
+                listLength--;
+            }
+        }
+        return resultDeletion;
+    }
+
+    /*public boolean delElementByData(T data) {
+        boolean resultDeletion = false;
         addFirstElement(null);
         ListElement<T> element = head;
         int listLengthPrimary = listLength;
         for (int i = 0; i < listLengthPrimary - 1; i++) {
-            if (element.getNext().getData() != null) {
+            //if (element.getNext().getData() != null) {
                 if (element.getNext().getData().equals(data)) {
                     element.setNext(element.getNext().getNext());
                     resultDeletion = true;
                     listLength--;
                     continue;
                 }
-            } else {
-                if (data == null) {
-                    element.setNext(element.getNext().getNext());
-                    resultDeletion = true;
-                    listLength--;
-                    continue;
-                }
-            }
+           // } else {
+                //if (data == null) {
+                    //element.setNext(element.getNext().getNext());
+                   // resultDeletion = true;
+                   // listLength--;
+                   // continue;
+                //}
+            //}
             element = element.getNext();
         }
         delFirstElement();
         return resultDeletion;
-    }
+    }*/
 
     public T delFirstElement() {
         this.checkEmptinessList();
@@ -134,7 +161,8 @@ public class SinglyLinkedList<T> {
         head = element;
     }
 
-    public void copyList(SinglyLinkedList<T> copy) {
+    public SinglyLinkedList<T> copyList() {
+        SinglyLinkedList<T> copy = new SinglyLinkedList<>();
         if (this.listLength != 0) {
             ListElement<T> listElementPrimary = this.head;
             ListElement<T> listElementPrevious = new ListElement<>(this.head.getData());
@@ -147,6 +175,7 @@ public class SinglyLinkedList<T> {
             }
             copy.listLength = this.listLength;
         }
+        return copy;
     }
 
     @Override

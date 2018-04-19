@@ -7,10 +7,10 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         SinglyLinkedList<Integer> list1 = new SinglyLinkedList<>();
-        list1.addFirstElement(7);
+        list1.addFirstElement(null);
         list1.addFirstElement(6);
         list1.addFirstElement(5);
-        list1.addFirstElement(4);
+        list1.addFirstElement(3);
         list1.addFirstElement(3);
 
         System.out.println("Список номер 1: " + list1.toString());
@@ -79,8 +79,6 @@ public class Main {
         System.out.println(System.lineSeparator() + "Список номер 1 после его разворота: " + list1.toString());
 
 
-        SinglyLinkedList<Integer> list2 = new SinglyLinkedList<>();
-        list1.copyList(list2);
-        System.out.println(System.lineSeparator() + "Список номер 2 (копия списка номер 1): " + list2.toString());
+        System.out.println(System.lineSeparator() + "Список номер 2 (копия списка номер 1): " + list1.copyList().toString());
     }
 }
