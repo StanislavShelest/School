@@ -7,12 +7,11 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         List<Integer> list1 = new List<>();
+        list1.addFirstElement(7);
+        list1.addFirstElement(6);
         list1.addFirstElement(5);
         list1.addFirstElement(4);
         list1.addFirstElement(3);
-
-        list1.addFiniteElement(6);
-        list1.addFiniteElement(7);
 
         System.out.println("Список номер 1: " + list1.toString());
         System.out.println("Длина списка: " + list1.getLength());
@@ -88,11 +87,7 @@ public class Main {
         list2.addFirstElement(11);
         list2.addFirstElement(88);
 
-        System.out.println(System.lineSeparator() + "Список номер 2: " + list2.toString());
-        System.out.println("Длина списка номер 2: " + list2.getLength());
-        System.out.println("Вместимость списка номер 2: " + list2.getCapacity());
-
         list2.trimToSize();
-        System.out.println("После trimToSize длина списка \"" + list2.getLength() + "\", а вместимость \"" + list2.getCapacity() + "\"");
+        System.out.println(System.lineSeparator() + "Список номер 2: " + list2.toString());
     }
 }

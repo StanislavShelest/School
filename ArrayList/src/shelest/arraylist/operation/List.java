@@ -1,15 +1,19 @@
 package shelest.arraylist.operation;
 
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 public class List<T> {
-    private T[] data = (T[]) new Object[10];
+    private T[] data;
     private int listLength;
 
     public List() {
+        //noinspection unchecked
+        this.data = (T[]) new Object[10];
     }
 
     public List(int capacity) {
+        //noinspection unchecked
         this.data = (T[]) new Object[capacity];
     }
 
@@ -28,6 +32,7 @@ public class List<T> {
     private void ensureCapacity() {
         if (listLength >= this.data.length) {
             T[] temp = this.data;
+            //noinspection unchecked
             this.data = (T[]) new Object[temp.length * 2];
             System.arraycopy(temp, 0, this.data, 0, temp.length);
         }
@@ -35,10 +40,6 @@ public class List<T> {
 
     public int getLength() {
         return this.listLength;
-    }
-
-    public int getCapacity() {
-        return this.data.length;
     }
 
     public T getFirstElement() {
@@ -118,21 +119,13 @@ public class List<T> {
 
     public List<T> copyList() {
         List<T> copy = new List<>();
-        System.arraycopy(this.data, 0, copy.data, 0, this.listLength);
+        copy.data = Arrays.copyOf(this.data, this.listLength);
         copy.listLength = this.listLength;
         return copy;
     }
 
-    public void addFiniteElement(T data) {
-        ensureCapacity();
-        this.data[listLength] = data;
-        listLength++;
-    }
-
     public void trimToSize() {
-        T[] temp = (T[]) new Object[listLength];
-        System.arraycopy(this.data, 0, temp, 0, temp.length);
-        this.data = temp;
+        this.data = Arrays.copyOf(this.data, this.listLength);
     }
 
     @Override
