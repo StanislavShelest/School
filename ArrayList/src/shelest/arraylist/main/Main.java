@@ -1,93 +1,171 @@
 package shelest.arraylist.main;
 
-import shelest.arraylist.operation.List;
+import shelest.arraylist.operation.ArrayList;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        List<Integer> list1 = new List<>();
-        list1.addFirstElement(7);
-        list1.addFirstElement(6);
-        list1.addFirstElement(5);
-        list1.addFirstElement(4);
-        list1.addFirstElement(3);
+        ArrayList<Integer> arrayList1 = new ArrayList<>();
+        arrayList1.add(8);
+        arrayList1.add(9);
+        arrayList1.add(6);
+        arrayList1.add(6);
+        arrayList1.add(4);
 
-        System.out.println("Список номер 1: " + list1.toString());
-        System.out.println("Длина списка: " + list1.getLength());
-        System.out.println("Первый элемент: " + list1.getFirstElement());
+        System.out.println("Список №1: " + arrayList1.toString());
+        System.out.println("Длина списка: " + arrayList1.size());
+        System.out.println("Пустой ли список: " + arrayList1.isEmpty());
 
 
-        System.out.print(System.lineSeparator() + "Введите индекс: ");
+        System.out.print(System.lineSeparator() + "Введите значение для поиска по списку: ");
         Scanner scanner1 = new Scanner(System.in);
-        int index1 = scanner1.nextInt();
-        System.out.println("Элемент по индексу " + index1 + " равен: " + list1.getData(index1));
+        Integer number1 = scanner1.nextInt();
+        System.out.println("Содержит ли список элемент \"" + number1 + "\": " + arrayList1.contains(number1));
 
 
-        System.out.print(System.lineSeparator() + "Введите индекс для изменения значения: ");
+        System.out.println("Отсортированный массив, полученный из списка №1: " + Arrays.toString(arrayList1.toArray()));
+
+
+        Integer[] array = new Integer[3];
+        System.out.println("Отсортированный массив, полученный из списка №1: " + Arrays.toString(arrayList1.toArray(array)));
+
+
+        System.out.print(System.lineSeparator() + "Введите значение для удаления из списка: ");
         Scanner scanner2 = new Scanner(System.in);
-        int index2 = scanner2.nextInt();
+        Integer number2 = scanner2.nextInt();
+        System.out.println("Удален ли элемент \"" + number2 + "\" из списка: " + arrayList1.remove(number2));
+        System.out.println("Список №1 после изменений: " + arrayList1.toString());
 
-        System.out.print("Введите целое число: ");
+
+        ArrayList<Integer> arrayList2 = new ArrayList<>();
+        arrayList2.add(6);
+        arrayList2.add(4);
+        arrayList2.add(7);
+        arrayList2.add(4);
+        arrayList2.add(null);
+
+        System.out.println(System.lineSeparator() + "Список №2: " + arrayList2.toString());
+        System.out.println("Все ли элементы списка №2 присутсвуют в списке №1: " + arrayList1.containsAll(arrayList2));
+
+        ArrayList<Integer> arrayList3 = new ArrayList<>();
+        arrayList3.add(null);
+        arrayList3.add(4);
+        arrayList3.add(5);
+        arrayList3.add(6);
+        arrayList3.add(7);
+
+        System.out.println(System.lineSeparator() + "Список №3: " + arrayList3.toString());
+        System.out.println("Добавлен ли список №3 в конец списка №1: " + arrayList1.addAll(arrayList3));
+        System.out.println("Список №1 после изменений: " + arrayList1.toString());
+
+
+        ArrayList<Integer> arrayList4 = new ArrayList<>();
+        arrayList4.add(null);
+        arrayList4.add(4);
+        arrayList4.add(5);
+        arrayList4.add(6);
+        arrayList4.add(7);
+
+        System.out.println(System.lineSeparator() + "Список №4: " + arrayList4.toString());
+        System.out.print("Введите индекс, с которого начать добавление списка: ");
         Scanner scanner3 = new Scanner(System.in);
-        int number1 = scanner3.nextInt();
+        int index1 = scanner3.nextInt();
+        System.out.println("Добавлен ли список №4 в конец списка №1: " + arrayList1.addAll(index1, arrayList4));
+        System.out.println("Список №1 после изменений: " + arrayList1.toString());
 
-        System.out.println("Элемент \"" + list1.setData(index2, number1) + "\" по индексу " + index2 + " заменен на " + number1);
-        System.out.println("Список номер 1 после замены значения: " + list1.toString());
+
+        ArrayList<Integer> arrayList5 = new ArrayList<>();
+        arrayList5.add(0);
+        arrayList5.add(3);
+        arrayList5.add(8);
+        arrayList5.add(6);
+        arrayList5.add(null);
 
 
-        System.out.print(System.lineSeparator() + "Введите индекс для удаления значения: ");
+        System.out.println(System.lineSeparator() + "Список №5: " + arrayList5.toString());
+        System.out.println("Удалены в списке №1 лишь элементы входящие в список №5: " + arrayList1.removeAll(arrayList5));
+        System.out.println("Список №1 после изменений: " + arrayList1.toString());
+
+
+        ArrayList<Integer> arrayList6 = new ArrayList<>();
+        arrayList6.add(null);
+        arrayList6.add(4);
+        arrayList6.add(5);
+        arrayList6.add(9);
+        arrayList6.add(6);
+
+
+        System.out.println(System.lineSeparator() + "Список №6: " + arrayList6.toString());
+        System.out.println("Сохранены в списке №1 лишь элементы входящие в список №6: " + arrayList1.retainAll(arrayList6));
+        System.out.println("Список №1 после изменений: " + arrayList1.toString());
+
+
+        System.out.print(System.lineSeparator() + "Введите индекс для получения значения элемента: ");
         Scanner scanner4 = new Scanner(System.in);
-        int index3 = scanner4.nextInt();
-        System.out.println("Элемент со значением \"" + list1.delElement(index3) + "\" по индексу " + index3 + " удален");
-        System.out.println("Список номер 1 после удаления значения: " + list1.toString());
+        int index2 = scanner4.nextInt();
+        System.out.println("Значение элемента под идексом \"" + index2 + "\": " + arrayList1.get(index2));
 
 
-        System.out.print(System.lineSeparator() + "Введите целое число: ");
+        System.out.print(System.lineSeparator() + "Введите индекс для изменения значения элемента: ");
         Scanner scanner5 = new Scanner(System.in);
-        int number2 = scanner5.nextInt();
-
-        list1.addFirstElement(number2);
-        System.out.println("Список номер 1 после добавления \"" + number2 + "\" в начало списка: " + list1.toString());
-
-
-        System.out.print(System.lineSeparator() + "Введите индекс для добавления значения: ");
+        int index3 = scanner5.nextInt();
+        System.out.print("Введите значение элемента: ");
         Scanner scanner6 = new Scanner(System.in);
-        int index4 = scanner6.nextInt();
+        Integer number3 = scanner6.nextInt();
 
-        System.out.print("Введите целое число: ");
+        arrayList1.set(index3, number3);
+        System.out.println("Список №1 после изменения значения: " + arrayList1.toString());
+
+
+        System.out.print(System.lineSeparator() + "Введите индекс для добавления значения элемента: ");
         Scanner scanner7 = new Scanner(System.in);
-        int number3 = scanner7.nextInt();
-
-        list1.addElement(index4, number3);
-        System.out.println("Список номер 1 после добавления значения: " + list1.toString());
-
-
-        System.out.print(System.lineSeparator() + "Введите целое число для поиска по списку: ");
+        int index4 = scanner7.nextInt();
+        System.out.print("Введите значение элемента: ");
         Scanner scanner8 = new Scanner(System.in);
         Integer number4 = scanner8.nextInt();
 
-        System.out.println("Результат удаления: " + list1.delElementByData(number4));
-        System.out.println("Список номер 1 после удаления значения: " + list1.toString());
+        arrayList1.add(index4, number4);
+        System.out.println("Список №1 после изменения значения: " + arrayList1.toString());
 
 
-        System.out.println(System.lineSeparator() + "Удаленный первый элемент: " + list1.delFirstElement());
-        System.out.println("Список номер 1 после удаления первого элемента: " + list1.toString());
+        System.out.print(System.lineSeparator() + "Введите индекс для удаления элемента: ");
+        Scanner scanner9 = new Scanner(System.in);
+        int index5 = scanner9.nextInt();
+
+        System.out.println("Элемент со значением \"" + arrayList1.remove(index5) + "\" удален");
+        System.out.println("Список №1 после удаления значения: " + arrayList1.toString());
 
 
-        list1.getTurn();
-        System.out.println(System.lineSeparator() + "Список номер 1 после его разворота: " + list1.toString());
+        System.out.print(System.lineSeparator() + "Введите значение элемента для поиска по списку: ");
+        Scanner scanner10 = new Scanner(System.in);
+        Integer number5 = scanner10.nextInt();
+
+        System.out.println("Индекс первого вхождения элемента с этим значением: " + arrayList1.indexOf(number5));
 
 
-        System.out.println(System.lineSeparator() + "Список номер 2 (копия списка номер 1): " + list1.copyList().toString());
+        System.out.print(System.lineSeparator() + "Введите значение элемента для поиска по списку: ");
+        Scanner scanner11 = new Scanner(System.in);
+        Integer number6 = scanner11.nextInt();
+
+        System.out.println("Индекс последнего вхождения элемента с этим значением: " + arrayList1.lastIndexOf(number6));
 
 
-        List<Integer> list2 = new List<>(8);
-        list2.addFirstElement(null);
-        list2.addFirstElement(11);
-        list2.addFirstElement(88);
+        Iterator<Integer> iterator1 = arrayList1.iterator();
+        System.out.print(System.lineSeparator() + "Проверка итератора: ");
+        while (iterator1.hasNext()) {
+            System.out.print(iterator1.next() + " ");
+        }
 
-        list2.trimToSize();
-        System.out.println(System.lineSeparator() + "Список номер 2: " + list2.toString());
+
+        ListIterator<Integer> listIterator1 = arrayList1.listIterator();
+        System.out.print(System.lineSeparator() + "Проверка итератора списка: ");
+        while (listIterator1.hasNext()) {
+            System.out.print(listIterator1.next() + " ");
+        }
+
+
+        arrayList1.clear();
+        System.out.println(System.lineSeparator() + "Список №1 после очистки элементов: " + arrayList1.toString());
     }
 }
