@@ -17,12 +17,6 @@ public class ArrayList<T> implements List<T> {
         this.data = (T[]) new Object[capacity];
     }
 
-    private void checkNullElement() {
-        if (contains(null)) {
-            throw new NullPointerException("В списке присутсвуют элементы содержащие null");
-        }
-    }
-
     private void checkIncorrectIndex(int index) {
         if (index < 0 || index >= listLength) {
             throw new IndexOutOfBoundsException("Введен некорректный индекс");
@@ -53,10 +47,8 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public boolean contains(Object o) {
-        //noinspection unchecked
-        T data = (T) o;
         for (int i = 0; i < this.listLength; i++) {
-            if (Objects.equals(this.data[i], data)) {
+            if (Objects.equals(this.data[i], o)) {
                 return true;
             }
         }
@@ -65,39 +57,31 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public T[] toArray() {
-        checkNullElement();
-        //noinspection unchecked
-        T[] array = (T[]) new Object[this.listLength];
-        System.arraycopy(this.data, 0, array, 0, this.listLength);
-        Arrays.sort(array);
-        modCount++;
-        return array;
+        return Arrays.copyOf(this.data, this.listLength);
     }
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        checkNullElement();
-        //noinspection unchecked
-        a = (T1[]) new Object[this.listLength];
-        System.arraycopy(this.data, 0, a, 0, this.listLength);
-        Arrays.sort(a);
-        modCount++;
+        if (a.length < listLength) {
+            return (T1[]) Arrays.copyOf(this.data, listLength, a.getClass());
+        }
+        System.arraycopy(this.data, 0, a, 0, listLength);
+        if (a.length > listLength) {
+            a[listLength] = null;
+        }
         return a;
     }
 
     @Override
     public boolean add(T data) {
         add(listLength, data);
-        modCount++;
         return true;
     }
 
     @Override
     public boolean remove(Object o) {
-        //noinspection unchecked
-        T data = (T) o;
         for (int i = 0; i < this.listLength; i++) {
-            if (Objects.equals(this.data[i], data)) {
+            if (Objects.equals(this.data[i], o)) {
                 System.arraycopy(this.data, i + 1, this.data, i, listLength - i - 1);
                 listLength--;
                 modCount++;
@@ -109,12 +93,10 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        //noinspection unchecked
-        ArrayList<T> transmittedList = (ArrayList<T>) c;
-        if (transmittedList.listLength != 0) {
-            if (this != transmittedList) {
-                for (int i = 0; i < transmittedList.listLength; i++) {
-                    if (!contains(transmittedList.data[i])) {
+        if (c.size() != 0) {
+            if (this != c) {
+                for (Object element : c) {
+                    if (!this.contains(element)) {
                         return false;
                     }
                 }
@@ -126,24 +108,18 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        //noinspection unchecked
-        ArrayList<T> transmittedList = (ArrayList<T>) c;
-        return transmittedList.listLength != 0 && this.addAll(this.listLength, transmittedList);
+        return c.size() != 0 && this.addAll(this.listLength, c);
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
         checkIncorrectIndexLengthInclusive(index);
-        //noinspection unchecked
-        ArrayList<T> transmittedList = (ArrayList<T>) c;
-        if (transmittedList.listLength != 0) {
-            if (this != transmittedList) {
-                if (transmittedList.listLength + index >= this.data.length) {
-                    this.data = Arrays.copyOf(this.data, transmittedList.listLength + index);
+        if (c.size() != 0) {
+            if (this != c) {
+                for (T element : c) {
+                    add(index, element);
+                    index++;
                 }
-                System.arraycopy(transmittedList.data, 0, this.data, index, transmittedList.listLength);
-                this.listLength = index + transmittedList.listLength;
-                modCount++;
                 return true;
             }
         }
@@ -152,19 +128,17 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        //noinspection unchecked
-        ArrayList<T> transmittedList = (ArrayList<T>) c;
         boolean delete = false;
-        if (transmittedList.listLength != 0) {
-            if (this != transmittedList) {
-                for (int i = 0; i < this.listLength; i++) {
-                    for (int j = 0; j < transmittedList.listLength; j++) {
-                        if (Objects.equals(this.data[i], transmittedList.data[j])) {
+        if (c.size() != 0) {
+            if (this != c) {
+                for (Object element : c) {
+                    for (int i = 0; i < this.listLength; i++) {
+                        if (Objects.equals(this.data[i], element)) {
                             System.arraycopy(this.data, i + 1, this.data, i, listLength - i - 1);
                             this.listLength--;
                             delete = true;
                             modCount++;
-                            j--;
+                            i--;
                         }
                     }
                 }
@@ -175,25 +149,19 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        //noinspection unchecked
-        ArrayList<T> transmittedList = (ArrayList<T>) c;
-        if (transmittedList.listLength != 0) {
-            if (this != transmittedList) {
-                for (int i = 0; i < this.listLength; i++) {
-                    boolean delete = false;
-                    for (int j = 0; j < transmittedList.listLength; j++) {
-                        if (Objects.equals(this.data[i], transmittedList.data[j])) {
+        if (c.size() != 0) {
+            if (this != c) {
+                for (Object element : c) {
+                    for (int i = 0; i < this.listLength; i++) {
+                        if (Objects.equals(this.data[i], element)) {
                             break;
                         } else {
-                            if (j == transmittedList.listLength - 1) {
-                                delete = true;
+                            if (i == this.listLength - 1) {
+                                System.arraycopy(this.data, i + 1, this.data, i, listLength - i - 1);
+                                this.listLength--;
+                                i--;
                             }
                         }
-                    }
-                    if (delete) {
-                        System.arraycopy(this.data, i + 1, this.data, i, listLength - i - 1);
-                        this.listLength--;
-                        i--;
                     }
                 }
                 modCount++;
@@ -245,10 +213,8 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public int indexOf(Object o) {
-        //noinspection unchecked
-        T data = (T) o;
         for (int i = 0; i < this.listLength; i++) {
-            if (Objects.equals(this.data[i], data)) {
+            if (Objects.equals(this.data[i], o)) {
                 return i;
             }
         }
@@ -257,10 +223,8 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public int lastIndexOf(Object o) {
-        //noinspection unchecked
-        T data = (T) o;
         for (int i = listLength - 1; i >= 0; i--) {
-            if (Objects.equals(this.data[i], data)) {
+            if (Objects.equals(this.data[i], o)) {
                 return i;
             }
         }
@@ -284,7 +248,7 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
-        return null;
+        return this;
     }
 
     @Override
