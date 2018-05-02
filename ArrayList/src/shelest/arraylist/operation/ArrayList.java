@@ -29,10 +29,14 @@ public class ArrayList<T> implements List<T> {
         }
     }
 
-    private void ensureCapacity() {
-        if (listLength >= this.data.length) {
-            this.data = Arrays.copyOf(this.data, this.listLength * 2);
+    private void ensureCapacity(int minCapacity) {
+        if (minCapacity >= this.data.length) {
+            this.data = Arrays.copyOf(this.data, this.data.length * 2);
         }
+    }
+
+    public void trimToSize() {
+        this.data = Arrays.copyOf(this.data, listLength);
     }
 
     @Override
@@ -63,8 +67,10 @@ public class ArrayList<T> implements List<T> {
     @Override
     public <T1> T1[] toArray(T1[] a) {
         if (a.length < listLength) {
+            //noinspection unchecked
             return (T1[]) Arrays.copyOf(this.data, listLength, a.getClass());
         }
+        //noinspection SuspiciousSystemArraycopy
         System.arraycopy(this.data, 0, a, 0, listLength);
         if (a.length > listLength) {
             a[listLength] = null;
@@ -94,34 +100,38 @@ public class ArrayList<T> implements List<T> {
     @Override
     public boolean containsAll(Collection<?> c) {
         if (c.size() != 0) {
-            if (this != c) {
-                for (Object element : c) {
-                    if (!this.contains(element)) {
-                        return false;
-                    }
+            for (Object element : c) {
+                if (!this.contains(element)) {
+                    return false;
                 }
-                return true;
             }
+            return true;
         }
-        return false;
+        return true;
     }
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        return c.size() != 0 && this.addAll(this.listLength, c);
+        return this.addAll(this.listLength, c);
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
         checkIncorrectIndexLengthInclusive(index);
+        ensureCapacity(listLength + c.size());
         if (c.size() != 0) {
-            if (this != c) {
-                for (T element : c) {
-                    add(index, element);
-                    index++;
-                }
-                return true;
+            //noinspection unchecked
+            T[] arrayCollection = (T[]) new Object[c.size()];
+            int indexCollection = 0;
+            for (T element : c) {
+                arrayCollection[indexCollection] = element;
+                indexCollection++;
             }
+            System.arraycopy(this.data, index, this.data, index + c.size(), this.listLength - index);
+            System.arraycopy(arrayCollection, 0, this.data, index, arrayCollection.length);
+            listLength += arrayCollection.length;
+            modCount++;
+            return true;
         }
         return false;
     }
@@ -130,16 +140,14 @@ public class ArrayList<T> implements List<T> {
     public boolean removeAll(Collection<?> c) {
         boolean delete = false;
         if (c.size() != 0) {
-            if (this != c) {
-                for (Object element : c) {
-                    for (int i = 0; i < this.listLength; i++) {
-                        if (Objects.equals(this.data[i], element)) {
-                            System.arraycopy(this.data, i + 1, this.data, i, listLength - i - 1);
-                            this.listLength--;
-                            delete = true;
-                            modCount++;
-                            i--;
-                        }
+            for (Object element : c) {
+                for (int i = 0; i < this.listLength; i++) {
+                    if (Objects.equals(this.data[i], element)) {
+                        System.arraycopy(this.data, i + 1, this.data, i, listLength - i - 1);
+                        this.listLength--;
+                        delete = true;
+                        modCount++;
+                        i--;
                     }
                 }
             }
@@ -150,23 +158,15 @@ public class ArrayList<T> implements List<T> {
     @Override
     public boolean retainAll(Collection<?> c) {
         if (c.size() != 0) {
-            if (this != c) {
-                for (Object element : c) {
-                    for (int i = 0; i < this.listLength; i++) {
-                        if (Objects.equals(this.data[i], element)) {
-                            break;
-                        } else {
-                            if (i == this.listLength - 1) {
-                                System.arraycopy(this.data, i + 1, this.data, i, listLength - i - 1);
-                                this.listLength--;
-                                i--;
-                            }
-                        }
-                    }
+            for (int i = 0; i < this.listLength; i++) {
+                if (!c.contains(this.data[i])) {
+                    System.arraycopy(this.data, i + 1, this.data, i, listLength - 1 - i);
+                    listLength--;
+                    i--;
                 }
-                modCount++;
-                return true;
             }
+            modCount++;
+            return true;
         }
         return false;
     }
@@ -194,7 +194,7 @@ public class ArrayList<T> implements List<T> {
     @Override
     public void add(int index, T data) {
         checkIncorrectIndexLengthInclusive(index);
-        ensureCapacity();
+        ensureCapacity(listLength);
         System.arraycopy(this.data, index, this.data, index + 1, listLength - index);
         this.data[index] = data;
         listLength++;
@@ -345,18 +345,17 @@ public class ArrayList<T> implements List<T> {
 
         @Override
         public int nextIndex() {
-            return currentIndex++;
+            return currentIndex + 1;
         }
 
         @Override
         public int previousIndex() {
-            return currentIndex--;
+            return currentIndex - 1;
         }
 
         @Override
         public void remove() {
-            System.arraycopy(data, currentIndex + 1, data, currentIndex, listLength - 1 - currentIndex);
-            listLength--;
+            ArrayList.this.remove(currentIndex);
         }
 
         @Override
@@ -366,8 +365,7 @@ public class ArrayList<T> implements List<T> {
 
         @Override
         public void add(T t) {
-            data[currentIndex] = t;
-            listLength++;
+            ArrayList.this.add(t);
         }
     }
 }

@@ -24,11 +24,11 @@ public class Main {
         System.out.println("Содержит ли список элемент \"" + number1 + "\": " + arrayList1.contains(number1));
 
 
-        System.out.println("Отсортированный массив, полученный из списка №1: " + Arrays.toString(arrayList1.toArray()));
+        System.out.println("Массив, полученный из списка №1: " + Arrays.toString(arrayList1.toArray()));
 
 
         Integer[] array = new Integer[3];
-        System.out.println("Отсортированный массив, полученный из списка №1: " + Arrays.toString(arrayList1.toArray(array)));
+        System.out.println("Массив, полученный из списка №1: " + Arrays.toString(arrayList1.toArray(array)));
 
 
         System.out.print(System.lineSeparator() + "Введите значение для удаления из списка: ");
@@ -91,9 +91,9 @@ public class Main {
         ArrayList<Integer> arrayList6 = new ArrayList<>();
         arrayList6.add(null);
         arrayList6.add(4);
-        arrayList6.add(5);
+        arrayList6.add(8);
         arrayList6.add(9);
-        arrayList6.add(6);
+        arrayList6.add(5);
 
 
         System.out.println(System.lineSeparator() + "Список №6: " + arrayList6.toString());
