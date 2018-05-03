@@ -158,7 +158,7 @@ public class Main {
         }
 
 
-        ListIterator<Integer> listIterator1 = arrayList1.listIterator();
+        ListIterator<Integer> listIterator1 = arrayList1.listIterator(0);
         System.out.print(System.lineSeparator() + "Проверка итератора списка: ");
         while (listIterator1.hasNext()) {
             System.out.print(listIterator1.next() + " ");

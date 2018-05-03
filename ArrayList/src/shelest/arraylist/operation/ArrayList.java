@@ -29,14 +29,16 @@ public class ArrayList<T> implements List<T> {
         }
     }
 
-    private void ensureCapacity(int minCapacity) {
+    public void ensureCapacity(int minCapacity) {
         if (minCapacity >= this.data.length) {
-            this.data = Arrays.copyOf(this.data, this.data.length * 2);
+            this.data = Arrays.copyOf(this.data, minCapacity);
         }
     }
 
     public void trimToSize() {
-        this.data = Arrays.copyOf(this.data, listLength);
+        if (listLength != this.data.length) {
+            this.data = Arrays.copyOf(this.data, listLength);
+        }
     }
 
     @Override
@@ -99,13 +101,10 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        if (c.size() != 0) {
-            for (Object element : c) {
-                if (!this.contains(element)) {
-                    return false;
-                }
+        for (Object element : c) {
+            if (!this.contains(element)) {
+                return false;
             }
-            return true;
         }
         return true;
     }
@@ -120,16 +119,12 @@ public class ArrayList<T> implements List<T> {
         checkIncorrectIndexLengthInclusive(index);
         ensureCapacity(listLength + c.size());
         if (c.size() != 0) {
-            //noinspection unchecked
-            T[] arrayCollection = (T[]) new Object[c.size()];
-            int indexCollection = 0;
+            System.arraycopy(this.data, index, this.data, index + c.size(), listLength - index);
             for (T element : c) {
-                arrayCollection[indexCollection] = element;
-                indexCollection++;
+                this.data[index] = element;
+                index++;
             }
-            System.arraycopy(this.data, index, this.data, index + c.size(), this.listLength - index);
-            System.arraycopy(arrayCollection, 0, this.data, index, arrayCollection.length);
-            listLength += arrayCollection.length;
+            listLength += c.size();
             modCount++;
             return true;
         }
@@ -157,18 +152,24 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
+        boolean modification = false;
         if (c.size() != 0) {
             for (int i = 0; i < this.listLength; i++) {
                 if (!c.contains(this.data[i])) {
                     System.arraycopy(this.data, i + 1, this.data, i, listLength - 1 - i);
                     listLength--;
                     i--;
+                    modification = true;
                 }
             }
+
+        }
+        if (modification) {
             modCount++;
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     @Override
@@ -305,7 +306,7 @@ public class ArrayList<T> implements List<T> {
         }
 
         private ArrayListIterator(int index) {
-            currentIndex = index;
+            currentIndex = index - 1;
             this.modCountPrimary = modCount;
         }
 
@@ -356,6 +357,7 @@ public class ArrayList<T> implements List<T> {
         @Override
         public void remove() {
             ArrayList.this.remove(currentIndex);
+            modCount = modCountPrimary;
         }
 
         @Override
@@ -366,6 +368,7 @@ public class ArrayList<T> implements List<T> {
         @Override
         public void add(T t) {
             ArrayList.this.add(t);
+            modCount = modCountPrimary;
         }
     }
 }
