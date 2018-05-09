@@ -117,9 +117,6 @@ public class Main {
         return textHtml.toString();
     }
 
-
-
-
     public static void main(String[] args) throws FileNotFoundException {
         try (Scanner scanner = new Scanner(new FileInputStream("Csv/csvText.txt"), "windows-1251")) {
             char[][][] textCsv = new char[100][100][100];
