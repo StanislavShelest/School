@@ -7,28 +7,43 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        String nameInput = "Csv/csvText.txt";
-        String nameOutput = "Csv/htmlText.txt";
-        try (Scanner scanner = new Scanner(new FileInputStream(nameInput), "windows-1251")) {
-            StringBuilder textHtml = new StringBuilder("<!DOCTYPE html><table>");
+        System.out.print("Введите адрес для чтения файла CSV: ");
+        Scanner nameInput = new Scanner(System.in);
+
+        try (Scanner scanner = new Scanner(new FileInputStream(nameInput.nextLine()), "windows-1251")) {
+            StringBuilder textHtml = new StringBuilder();
+            textHtml.append("<!DOCTYPE html>")
+                    .append(System.lineSeparator()).append(" <html>")
+                    .append(System.lineSeparator()).append("  <head>")
+                    .append(System.lineSeparator()).append("   <title>Таблица</title>")
+                    .append(System.lineSeparator()).append("  </head>")
+                    .append(System.lineSeparator()).append("  <body>")
+                    .append(System.lineSeparator()).append("   <table>");
+
             int quotesCount = 0;
             while (scanner.hasNextLine()) {
                 if (quotesCount % 2 != 1) {
-                    textHtml.append("<tr><td>");
+                    textHtml.append(System.lineSeparator()).append("    <tr>")
+                            .append(System.lineSeparator()).append("     <td>");
                 }
+
                 String row = scanner.nextLine();
-                char symbol;
+
                 for (int j = 0; j < row.length(); j++) {
-                    symbol = row.charAt(j);
+                    char symbol = row.charAt(j);
+
                     switch (symbol) {
-                        case (','):
+                        case ',':
                             if (quotesCount % 2 != 1) {
-                                textHtml.append("</td><td>");
+                                textHtml.append("</td>")
+                                        .append(System.lineSeparator())
+                                        .append("     <td>");
                             } else {
                                 textHtml.append(symbol);
                             }
                             break;
-                        case ('"'):
+
+                        case '"':
                             quotesCount++;
                             if (j == row.length() - 1 || row.charAt(j + 1) != '"') {
                                 break;
@@ -45,30 +60,42 @@ public class Main {
                                     break;
                                 }
                             }
-                        case ('<'):
-                            textHtml.append("&lt");
+
+                        case '<':
+                            textHtml.append("&lt;");
                             break;
-                        case ('>'):
-                            textHtml.append("&gt");
+
+                        case '>':
+                            textHtml.append("&gt;");
                             break;
-                        case ('&'):
-                            textHtml.append("&amp");
+
+                        case '&':
+                            textHtml.append("&amp;");
                             break;
+
                         default:
                             textHtml.append(symbol);
                     }
                 }
+
                 if (quotesCount % 2 != 1) {
-                    textHtml.append("</td></tr>");
+                    textHtml.append("</td>")
+                            .append(System.lineSeparator())
+                            .append("    </tr>");
                 } else {
                     textHtml.append("<br/>");
                 }
             }
-            textHtml.append("</table>");
-            System.out.print(textHtml);
-            try (PrintWriter writer = new PrintWriter(nameOutput)) {
+            textHtml.append(System.lineSeparator()).append("   </table>")
+                    .append(System.lineSeparator()).append("  </body>")
+                    .append(System.lineSeparator()).append(" </html>");
+
+            System.out.print("Введите адрес для сохранения файла HTML: ");
+            Scanner nameOutput = new Scanner(System.in);
+            try (PrintWriter writer = new PrintWriter(nameOutput.nextLine())) {
                 writer.print(textHtml);
             }
+
         } catch (FileNotFoundException e) {
             System.out.print("Данный файл не был найден");
         }
