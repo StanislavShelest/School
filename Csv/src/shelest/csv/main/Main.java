@@ -7,10 +7,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.print("Введите адрес для чтения файла CSV: ");
-        Scanner nameInput = new Scanner(System.in);
-
-        try (Scanner scanner = new Scanner(new FileInputStream(nameInput.nextLine()), "windows-1251")) {
+        try (Scanner scanner = new Scanner(new FileInputStream(args[0]), "windows-1251")) {
             StringBuilder textHtml = new StringBuilder();
             textHtml.append("<!DOCTYPE html>")
                     .append(System.lineSeparator()).append(" <html>")
@@ -90,9 +87,7 @@ public class Main {
                     .append(System.lineSeparator()).append("  </body>")
                     .append(System.lineSeparator()).append(" </html>");
 
-            System.out.print("Введите адрес для сохранения файла HTML: ");
-            Scanner nameOutput = new Scanner(System.in);
-            try (PrintWriter writer = new PrintWriter(nameOutput.nextLine())) {
+            try (PrintWriter writer = new PrintWriter(args[1])) {
                 writer.print(textHtml);
             }
 
