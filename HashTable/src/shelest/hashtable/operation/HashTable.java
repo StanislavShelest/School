@@ -10,11 +10,14 @@ public class HashTable<T> implements Collection<T> {
     private int tableSize;
 
     public HashTable() {
-        this.collection = new Collection[100];
+        this.tableSize = 100;
+        this.collection = new Collection[this.tableSize];
     }
 
     public HashTable(int tableSize) {
+        this.tableSize = tableSize;
         this.collection = new Collection[tableSize];
+
     }
 
     @Override
@@ -62,7 +65,7 @@ public class HashTable<T> implements Collection<T> {
     @Override
     public boolean add(T t) {
         int tHash = leadToHashCodeTable(Objects.hashCode(t));
-        collection[tHash].add(t);
+        //collection[tHash] = t;
         return false;
     }
 
@@ -105,8 +108,8 @@ public class HashTable<T> implements Collection<T> {
     }
 
     private int leadToHashCodeTable(int elementHash) {
-        if (elementHash >= tableSize) {
-            elementHash = Math.abs(elementHash % tableSize);
+        if (elementHash >= this.tableSize) {
+            elementHash = Math.abs(elementHash % this.tableSize);
         }
         return elementHash;
     }

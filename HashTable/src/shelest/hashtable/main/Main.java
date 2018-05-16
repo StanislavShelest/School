@@ -11,5 +11,7 @@ public class Main {
         table1.add(6);
         table1.add(7);
         table1.add(2);
+
+        System.out.print(table1.toString());
     }
 }
