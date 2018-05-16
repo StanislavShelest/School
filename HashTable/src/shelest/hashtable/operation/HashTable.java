@@ -1,33 +1,38 @@
 package shelest.hashtable.operation;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 
 public class HashTable<T> implements Collection<T> {
-    private Collection<T>[] table;
-    private int capacity;
+    private Collection<T>[] collection;
+    private int tableSize;
 
-    /*public HashTable(){
-        this.table = new Collection<T>[100];
+    public HashTable() {
+        this.collection = new Collection[100];
     }
 
-    public HashTable(int capacity){
-        this.table = new Collection<T>[capacity];
-    }*/
+    public HashTable(int tableSize) {
+        this.collection = new Collection[tableSize];
+    }
 
     @Override
     public int size() {
-        return 0;
+        return this.tableSize;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return this.tableSize == 0;
     }
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        int elementHash = leadToHashCodeTable(Objects.hashCode(o));
+        Collection neededCollection = this.collection[elementHash];
+
+        return true;
     }
 
     @Override
@@ -37,27 +42,46 @@ public class HashTable<T> implements Collection<T> {
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        return Arrays.copyOf(this.collection, tableSize);
     }
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        return null;
+        if (a.length < tableSize) {
+            //noinspection unchecked
+            return (T1[]) Arrays.copyOf(this.collection, tableSize, a.getClass());
+        }
+        //noinspection SuspiciousSystemArraycopy
+        System.arraycopy(this.collection, 0, a, 0, tableSize);
+        if (a.length > tableSize) {
+            a[tableSize] = null;
+        }
+        return a;
     }
 
     @Override
     public boolean add(T t) {
+        int tHash = leadToHashCodeTable(Objects.hashCode(t));
+        collection[tHash].add(t);
         return false;
     }
 
     @Override
     public boolean remove(Object o) {
+        int oHash = leadToHashCodeTable(Objects.hashCode(o));
+        collection[oHash].remove(o);
         return false;
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        for (Object element: c){
+            int elementHash = leadToHashCodeTable(Objects.hashCode(element));
+            if (!collection[elementHash].contains(element)){
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -78,5 +102,12 @@ public class HashTable<T> implements Collection<T> {
     @Override
     public void clear() {
 
+    }
+
+    private int leadToHashCodeTable(int elementHash) {
+        if (elementHash >= tableSize) {
+            elementHash = Math.abs(elementHash % tableSize);
+        }
+        return elementHash;
     }
 }
