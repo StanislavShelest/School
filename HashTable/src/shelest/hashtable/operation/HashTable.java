@@ -1,116 +1,188 @@
 package shelest.hashtable.operation;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 public class HashTable<T> implements Collection<T> {
-    private Collection<T>[] collection;
-    private int tableSize;
+    private ArrayList<T>[] element;
+    private int lengthTable;
+    private int modCount = 0;
 
     public HashTable() {
-        this.tableSize = 100;
-        this.collection = new Collection[this.tableSize];
+        this.lengthTable = 50;
+        //noinspection unchecked
+        this.element = new ArrayList[50];
+        for (int i = 0; i < lengthTable; i++) {
+            element[i] = new ArrayList<>();
+        }
     }
 
-    public HashTable(int tableSize) {
-        this.tableSize = tableSize;
-        this.collection = new Collection[tableSize];
-
+    public HashTable(int lengthTable) {
+        this.lengthTable = lengthTable;
+        //noinspection unchecked
+        this.element = new ArrayList[lengthTable];
+        for (int i = 0; i < lengthTable; i++) {
+            element[i] = new ArrayList<>();
+        }
     }
 
     @Override
     public int size() {
-        return this.tableSize;
+        return lengthTable;
     }
 
     @Override
     public boolean isEmpty() {
-        return this.tableSize == 0;
+        return lengthTable == 0;
     }
 
     @Override
     public boolean contains(Object o) {
-        int elementHash = leadToHashCodeTable(Objects.hashCode(o));
-        Collection neededCollection = this.collection[elementHash];
-
-        return true;
+        return element[getHashCode(o)].contains(o);
     }
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        return new TableIterator();
+    }
+
+    private class TableIterator implements Iterator<T> {
+        private int currentIndex = -1;
+        private int modCountPrimary;
+
+        private TableIterator() {
+
+        }
+
+        @Override
+        public boolean hasNext() {
+            return currentIndex + 1 < lengthTable;
+        }
+
+        @Override
+        public T next() {
+            /*if (currentIndex == lengthTable) {
+                throw new NoSuchElementException("Список закончился");
+            }
+            if (modCountPrimary != modCount) {
+                throw new ConcurrentModificationException("За время обхода были внесены изменения в список");
+            }
+            currentIndex++;*/
+            return null;
+        }
     }
 
     @Override
     public Object[] toArray() {
-        return Arrays.copyOf(this.collection, tableSize);
+        //return Arrays.copyOf(this.element, lengthTable);
+        return null;
     }
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        if (a.length < tableSize) {
+        /*if (a.length < lengthTable) {
             //noinspection unchecked
-            return (T1[]) Arrays.copyOf(this.collection, tableSize, a.getClass());
+            return (T1[]) Arrays.copyOf(this.element, lengthTable, a.getClass());
         }
         //noinspection SuspiciousSystemArraycopy
-        System.arraycopy(this.collection, 0, a, 0, tableSize);
-        if (a.length > tableSize) {
-            a[tableSize] = null;
-        }
-        return a;
+        System.arraycopy(this.element, 0, a, 0, lengthTable);
+        if (a.length > lengthTable) {
+            a[lengthTable] = null;
+        }*/
+        return null;
     }
 
     @Override
     public boolean add(T t) {
-        int tHash = leadToHashCodeTable(Objects.hashCode(t));
-        //collection[tHash] = t;
-        return false;
+        modCount++;
+        return element[getHashCode(t)].add(t);
     }
 
     @Override
     public boolean remove(Object o) {
-        int oHash = leadToHashCodeTable(Objects.hashCode(o));
-        collection[oHash].remove(o);
-        return false;
+        modCount++;
+        return element[getHashCode(o)].remove(o);
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        for (Object element: c){
-            int elementHash = leadToHashCodeTable(Objects.hashCode(element));
-            if (!collection[elementHash].contains(element)){
-                return false;
+        if (c.size() != 0) {
+            for (Object searchElement : c) {
+                if (!this.contains(searchElement)) {
+                    return false;
+                }
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
+        if (c.size() != 0) {
+            for (T addedElement : c) {
+                this.add(addedElement);
+            }
+            modCount++;
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
+        if (c.size() != 0) {
+            boolean resultRemove = false;
+            for (Object deleteElement : c) {
+                if (this.remove(deleteElement)) {
+                    resultRemove = true;
+                }
+            }
+            if (resultRemove) {
+                modCount++;
+            }
+            return resultRemove;
+        }
         return false;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
+        if (c.size() != 0) {
+            boolean resultRetain = false;
+            for (int i = 0; i < lengthTable; i++) {
+                if (element[i].retainAll(c)) {
+                    resultRetain = true;
+                }
+            }
+            if (resultRetain) {
+                modCount++;
+            }
+            return resultRetain;
+        }
         return false;
     }
 
     @Override
     public void clear() {
-
+        for (int i = 0; i < lengthTable; i++) {
+            element[i] = new ArrayList<>();
+        }
+        modCount++;
     }
 
-    private int leadToHashCodeTable(int elementHash) {
-        if (elementHash >= this.tableSize) {
-            elementHash = Math.abs(elementHash % this.tableSize);
+    @Override
+    public String toString() {
+        StringBuilder line = new StringBuilder("[");
+        for (int i = 0; i < lengthTable; i++) {
+            line.append(element[i].toString());
+            line.append(", ");
         }
-        return elementHash;
+        line.delete(line.length() - 2, line.length());
+        line.append("]");
+        return line.toString();
+    }
+
+    private int getHashCode(Object value) {
+        return (Objects.hashCode(value)) % lengthTable;
     }
 }
