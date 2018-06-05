@@ -1,7 +1,6 @@
 package shelest.arraylist.main;
 
 import shelest.arraylist.operation.ArrayList;
-
 import java.util.*;
 
 public class Main {
