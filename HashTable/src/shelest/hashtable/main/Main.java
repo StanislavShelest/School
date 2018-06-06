@@ -13,7 +13,7 @@ public class Main {
         HashTable<Integer> table1 = new HashTable<>();
         table1.add(null);
         table1.add(9);
-        table1.add(6);
+        table1.add(0);
         table1.add(7);
         table1.add(2);
         table1.add(2);
