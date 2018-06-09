@@ -40,39 +40,59 @@ public class HashTable<T> implements Collection<T> {
     }
 
     private class TableIterator implements Iterator<T> {
-        private int currentIndex = -1;
+        private int currentListIndex = -1;
+        private int currentIndexInList = -1;
+        private int countUsedElement = 0;
         private int modCountPrimary;
 
         private TableIterator() {
+            for (int i = 0; i < tableLists.length; i++) {
+                if (tableLists[i].size() != 0) {
+                    currentListIndex = i;
+                    break;
+                }
+            }
             this.modCountPrimary = modCount;
         }
 
         @Override
         public boolean hasNext() {
-            return currentIndex + 1 < elementsCount;
+            if (currentListIndex == -1) {
+                return false;
+            }
+            if (currentIndexInList + 1 < tableLists[currentListIndex].size()) {
+                return true;
+            } else {
+                for (int i = 1; currentListIndex + i < tableLists.length; i++) {
+                    if (tableLists[currentListIndex + i].size() != 0) {
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
 
         @Override
         public T next() {
-            if (currentIndex == elementsCount) {
+            if (countUsedElement == elementsCount) {
                 throw new NoSuchElementException("Список закончился");
             }
             if (modCountPrimary != modCount) {
                 throw new ConcurrentModificationException("За время обхода были внесены изменения в список");
             }
-
-            currentIndex++;
-            int residualIndex = currentIndex;
-            int index = 0;
-            for (int i = 0; i < tableLists.length; i++) {
-                index = i;
-                if (residualIndex >= tableLists[i].size()) {
-                    residualIndex = residualIndex - tableLists[i].size();
-                } else {
-                    break;
+            if (currentIndexInList + 1 < tableLists[currentListIndex].size()) {
+                currentIndexInList++;
+            } else {
+                for (int i = 1; currentListIndex + i < tableLists.length; i++) {
+                    if (tableLists[currentListIndex + i].size() != 0) {
+                        currentListIndex += i;
+                        currentIndexInList = 0;
+                        break;
+                    }
                 }
             }
-            return tableLists[index].get(residualIndex);
+            countUsedElement++;
+            return tableLists[currentListIndex].get(currentIndexInList);
         }
     }
 
@@ -151,7 +171,6 @@ public class HashTable<T> implements Collection<T> {
             for (T addedElement : c) {
                 this.add(addedElement);
             }
-            modCount++;
             return true;
         }
         return false;
