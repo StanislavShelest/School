@@ -46,30 +46,12 @@ public class HashTable<T> implements Collection<T> {
         private int modCountPrimary;
 
         private TableIterator() {
-            for (int i = 0; i < tableLists.length; i++) {
-                if (tableLists[i].size() != 0) {
-                    currentListIndex = i;
-                    break;
-                }
-            }
             this.modCountPrimary = modCount;
         }
 
         @Override
         public boolean hasNext() {
-            if (currentListIndex == -1) {
-                return false;
-            }
-            if (currentIndexInList + 1 < tableLists[currentListIndex].size()) {
-                return true;
-            } else {
-                for (int i = 1; currentListIndex + i < tableLists.length; i++) {
-                    if (tableLists[currentListIndex + i].size() != 0) {
-                        return true;
-                    }
-                }
-                return false;
-            }
+            return countUsedElement + 1 <= elementsCount;
         }
 
         @Override
@@ -80,12 +62,22 @@ public class HashTable<T> implements Collection<T> {
             if (modCountPrimary != modCount) {
                 throw new ConcurrentModificationException("За время обхода были внесены изменения в список");
             }
+
+            if (currentListIndex == -1) {
+                for (int i = 0; i < tableLists.length; i++) {
+                    if (tableLists[i].size() != 0) {
+                        currentListIndex = i;
+                        break;
+                    }
+                }
+            }
+
             if (currentIndexInList + 1 < tableLists[currentListIndex].size()) {
                 currentIndexInList++;
             } else {
-                for (int i = 1; currentListIndex + i < tableLists.length; i++) {
-                    if (tableLists[currentListIndex + i].size() != 0) {
-                        currentListIndex += i;
+                for (int i = currentListIndex + 1; i < tableLists.length; i++) {
+                    if (tableLists[i].size() != 0) {
+                        currentListIndex = i;
                         currentIndexInList = 0;
                         break;
                     }
