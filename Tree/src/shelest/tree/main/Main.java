@@ -2,7 +2,6 @@ package shelest.tree.main;
 
 import shelest.tree.operations.Tree;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -28,12 +27,20 @@ public class Main {
         Integer number2 = scanner2.nextInt();
         System.out.println("Удалено ли число из дерева: " + tree.remove(number2));
 
-        System.out.println(System.lineSeparator() + "Количество элементов в дереве: " + tree.getCountElement());
+        System.out.println(System.lineSeparator() + "Количество элементов в дереве: " + tree.getElementsCount());
 
-        System.out.println(System.lineSeparator() + "Массив полученный обходом в ширину: " + Arrays.toString(tree.bypassWidthArray()));
+        System.out.print(System.lineSeparator() + "Ряд значений полученный обходом в ширину: ");
+        tree.bypassWidth();
+        System.out.println();
 
-        System.out.println(System.lineSeparator() + "Список полученный обходом в глубину с рекурсией: " + tree.bypassDepthList());
+        System.out.print(System.lineSeparator() + "Ряд значений полученный обходом в глубину с рекурсией: ");
+        tree.bypassDepthRecursion(tree.getRoot());
+        System.out.println();
 
-        System.out.println(System.lineSeparator() + "Массив полученный обходом в глубину без рекурсии: " + Arrays.toString(tree.bypassDepthArray()));
+        System.out.print(System.lineSeparator() + "Ряд значений полученный обходом в глубину без рекурсии: ");
+        tree.bypassDepth();
+
+
     }
+
 }

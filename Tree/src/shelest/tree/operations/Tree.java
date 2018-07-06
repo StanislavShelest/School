@@ -1,37 +1,62 @@
 package shelest.tree.operations;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Tree<T> {
     private TreeNode<T> root;
-    private int countElement;
+    private int elementsCount;
 
     public Tree(T value) {
         this.root = new TreeNode<>(value);
-        this.countElement = 1;
+        this.elementsCount = 1;
+
     }
 
-    public int getCountElement() {
-        return countElement;
+    public TreeNode<T> getRoot() {
+        return this.root;
     }
 
-    private boolean isFirstValueLower(T value1, T value2) {
+    private void setRoot(TreeNode<T> root){
+        this.root.setLeft(root.getLeft());
+        this.root.setRight(root.getRight());
+        this.root.setValue(root.getValue());
+    }
+
+    private void checkTreeNull (){
+        if (this.getRoot() == null){
+            throw new NullPointerException("Используется пустое дерево!");
+        }
+    }
+
+    public int getElementsCount() {
+        return elementsCount;
+    }
+
+    private Comparator<T> comparator = (Comparator<T>) (value1, value2) -> {
+        if (Objects.equals(value1, value2)) {
+            return 0;
+        }
         //noinspection unchecked
         T[] arrayValue = (T[]) new Object[2];
         arrayValue[0] = value1;
         arrayValue[1] = value2;
         Arrays.sort(arrayValue);
-        return value1.equals(arrayValue[0]);
-    }
+        if (Objects.equals(value1, arrayValue[0])) {
+            return 1;
+        } else {
+            return -1;
+        }
+    };
 
     public void add(T value) {
-        if (root.getValue() == null) {
-            root.setValue(value);
+        if (this.root == null) {
+            this.root = new TreeNode<>(value);
         } else {
             TreeNode<T> currentNode = root;
             boolean cycleRepeat = true;
             while (cycleRepeat) {
-                if (isFirstValueLower(value, currentNode.getValue())) {
+                if (comparator.compare(value, currentNode.getValue()) == 1) {
                     if (currentNode.getLeft() != null) {
                         currentNode = currentNode.getLeft();
                     } else {
@@ -47,17 +72,18 @@ public class Tree<T> {
                     }
                 }
             }
-            countElement++;
         }
+        elementsCount++;
     }
 
     public boolean search(T value) {
+        checkTreeNull();
         TreeNode<T> currentNode = root;
         for (; ; ) {
             if (Objects.equals(value, currentNode.getValue())) {
                 return true;
             }
-            if (isFirstValueLower(value, currentNode.getValue())) {
+            if (comparator.compare(value, currentNode.getValue()) == 1) {
                 if (currentNode.getLeft() != null) {
                     currentNode = currentNode.getLeft();
                 } else {
@@ -74,20 +100,23 @@ public class Tree<T> {
     }
 
     public boolean remove(T value) {
+        checkTreeNull();
         TreeNode<T> currentNode = root;
         TreeNode<T> parentCurrentNode = currentNode;
         for (; ; ) {
-            if (Objects.equals(value, currentNode.getValue())) {
+            if (comparator.compare(value, currentNode.getValue()) == 0) {
                 break;
             }
-            parentCurrentNode = currentNode;
-            if (isFirstValueLower(value, currentNode.getValue())) {
+            if (comparator.compare(value, currentNode.getValue()) == 1) {
+                parentCurrentNode = currentNode;
                 if (currentNode.getLeft() != null) {
                     currentNode = currentNode.getLeft();
                 } else {
                     return false;
                 }
-            } else {
+            }
+            if (comparator.compare(value, currentNode.getValue()) == -1) {
+                parentCurrentNode = currentNode;
                 if (currentNode.getRight() != null) {
                     currentNode = currentNode.getRight();
                 } else {
@@ -97,44 +126,44 @@ public class Tree<T> {
         }
 
         if (currentNode.getLeft() == null && currentNode.getRight() == null) {
-            if (isFirstValueLower(currentNode.getValue(), parentCurrentNode.getValue())) {
-                parentCurrentNode.setLeft(null);
-            } else {
-                if (isFirstValueLower(parentCurrentNode.getValue(), currentNode.getValue())) {
-                    parentCurrentNode.setRight(null);
-                } else {
-                    parentCurrentNode = null;
-                }
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 0) {
+                root = null;
             }
-            countElement--;
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 1) {
+                parentCurrentNode.setLeft(null);
+            }
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == -1) {
+                parentCurrentNode.setRight(null);
+            }
+            elementsCount--;
             return true;
         }
 
         if (currentNode.getLeft() == null) {
-            if (isFirstValueLower(currentNode.getValue(), parentCurrentNode.getValue())) {
-                parentCurrentNode.setLeft(currentNode.getRight());
-            } else {
-                if (isFirstValueLower(parentCurrentNode.getValue(), currentNode.getValue())) {
-                    parentCurrentNode.setRight(currentNode.getRight());
-                } else {
-                    parentCurrentNode = currentNode.getRight();
-                }
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 0) {
+                this.setRoot(currentNode.getRight());
             }
-            countElement--;
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 1) {
+                parentCurrentNode.setLeft(currentNode.getRight());
+            }
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == -1) {
+                parentCurrentNode.setRight(currentNode.getRight());
+            }
+            elementsCount--;
             return true;
         }
 
         if (currentNode.getRight() == null) {
-            if (isFirstValueLower(currentNode.getValue(), parentCurrentNode.getValue())) {
-                parentCurrentNode.setLeft(currentNode.getLeft());
-            } else {
-                if (isFirstValueLower(parentCurrentNode.getValue(), currentNode.getValue())) {
-                    parentCurrentNode.setRight(currentNode.getLeft());
-                } else {
-                    parentCurrentNode = currentNode.getLeft();
-                }
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 0) {
+                this.setRoot(currentNode.getLeft());
             }
-            countElement--;
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 1) {
+                parentCurrentNode.setLeft(currentNode.getLeft());
+            }
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == -1) {
+                parentCurrentNode.setRight(currentNode.getLeft());
+            }
+            elementsCount--;
             return true;
         }
 
@@ -157,41 +186,46 @@ public class Tree<T> {
             parentMinRightCurrentNode.setLeft(minRightCurrentNode.getRight());
         }
         currentNode.setValue(minRightCurrentNode.getValue());
-        countElement--;
+        elementsCount--;
         return true;
     }
 
-    public T[] bypassWidthArray() {
+    public void bypassWidth() {
+        checkTreeNull();
         Queue<TreeNode<T>> queue = new LinkedList<>();
-        //noinspection unchecked
-        T[] array = (T[]) new Object[countElement];
         queue.add(root);
-        for (int i = 0; queue.size() != 0; i++) {
+        while (queue.size() != 0) {
             if (queue.element().getLeft() != null) {
                 queue.add(queue.element().getLeft());
             }
             if (queue.element().getRight() != null) {
                 queue.add(queue.element().getRight());
             }
-            array[i] = queue.remove().getValue();
+            Consumer<T> print = value -> System.out.print(value + " ");
+            print.accept(queue.remove().getValue());
         }
-        return array;
     }
 
-    public ArrayList<T> bypassDepthList() {
-        ArrayList<T> list = new ArrayList<>();
-        list = root.bypassDepthList(root, list);
-        return list;
+    public void bypassDepthRecursion(TreeNode<T> currentNode) {
+        checkTreeNull();
+        Consumer<T> print = value -> System.out.print(value + " ");
+        print.accept(currentNode.getValue());
+        if (currentNode.getLeft() != null) {
+            bypassDepthRecursion(currentNode.getLeft());
+        }
+        if (currentNode.getRight() != null) {
+            bypassDepthRecursion(currentNode.getRight());
+        }
     }
 
-    public T[] bypassDepthArray() {
+    public void bypassDepth() {
+        checkTreeNull();
         Deque<TreeNode<T>> stack = new LinkedList<>();
         stack.addLast(root);
-        //noinspection unchecked
-        T[] array = (T[]) new Object[countElement];
-        for (int i = 0; stack.size() != 0; i++) {
+        while (stack.size() != 0) {
             TreeNode<T> currentNode = stack.removeLast();
-            array[i] = currentNode.getValue();
+            Consumer<T> print = value -> System.out.print(value + " ");
+            print.accept(currentNode.getValue());
             if (currentNode.getRight() != null) {
                 stack.addLast(currentNode.getRight());
             }
@@ -199,6 +233,5 @@ public class Tree<T> {
                 stack.addLast(currentNode.getLeft());
             }
         }
-        return array;
     }
 }
