@@ -6,25 +6,26 @@ import java.util.function.Consumer;
 public class Tree<T> {
     private TreeNode<T> root;
     private int elementsCount;
+    private Comparator<T> comparator;
 
-    public Tree(T value) {
+    public Tree(T value, Comparator<T> comparator) {
         this.root = new TreeNode<>(value);
         this.elementsCount = 1;
-
+        this.comparator = comparator;
     }
 
     public TreeNode<T> getRoot() {
         return this.root;
     }
 
-    private void setRoot(TreeNode<T> root){
+    private void setRoot(TreeNode<T> root) {
         this.root.setLeft(root.getLeft());
         this.root.setRight(root.getRight());
         this.root.setValue(root.getValue());
     }
 
-    private void checkTreeNull (){
-        if (this.getRoot() == null){
+    private void checkTreeNull() {
+        if (this.getRoot() == null) {
             throw new NullPointerException("Используется пустое дерево!");
         }
     }
@@ -33,22 +34,6 @@ public class Tree<T> {
         return elementsCount;
     }
 
-    private Comparator<T> comparator = (Comparator<T>) (value1, value2) -> {
-        if (Objects.equals(value1, value2)) {
-            return 0;
-        }
-        //noinspection unchecked
-        T[] arrayValue = (T[]) new Object[2];
-        arrayValue[0] = value1;
-        arrayValue[1] = value2;
-        Arrays.sort(arrayValue);
-        if (Objects.equals(value1, arrayValue[0])) {
-            return 1;
-        } else {
-            return -1;
-        }
-    };
-
     public void add(T value) {
         if (this.root == null) {
             this.root = new TreeNode<>(value);
@@ -56,7 +41,7 @@ public class Tree<T> {
             TreeNode<T> currentNode = root;
             boolean cycleRepeat = true;
             while (cycleRepeat) {
-                if (comparator.compare(value, currentNode.getValue()) == 1) {
+                if (comparator.compare(value, currentNode.getValue()) > 0) {
                     if (currentNode.getLeft() != null) {
                         currentNode = currentNode.getLeft();
                     } else {
@@ -80,10 +65,10 @@ public class Tree<T> {
         checkTreeNull();
         TreeNode<T> currentNode = root;
         for (; ; ) {
-            if (Objects.equals(value, currentNode.getValue())) {
+            if (comparator.compare(value, currentNode.getValue()) == 0) {
                 return true;
             }
-            if (comparator.compare(value, currentNode.getValue()) == 1) {
+            if (comparator.compare(value, currentNode.getValue()) > 0) {
                 if (currentNode.getLeft() != null) {
                     currentNode = currentNode.getLeft();
                 } else {
@@ -107,7 +92,7 @@ public class Tree<T> {
             if (comparator.compare(value, currentNode.getValue()) == 0) {
                 break;
             }
-            if (comparator.compare(value, currentNode.getValue()) == 1) {
+            if (comparator.compare(value, currentNode.getValue()) > 0) {
                 parentCurrentNode = currentNode;
                 if (currentNode.getLeft() != null) {
                     currentNode = currentNode.getLeft();
@@ -115,7 +100,7 @@ public class Tree<T> {
                     return false;
                 }
             }
-            if (comparator.compare(value, currentNode.getValue()) == -1) {
+            if (comparator.compare(value, currentNode.getValue()) < 0) {
                 parentCurrentNode = currentNode;
                 if (currentNode.getRight() != null) {
                     currentNode = currentNode.getRight();
@@ -129,10 +114,10 @@ public class Tree<T> {
             if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 0) {
                 root = null;
             }
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 1) {
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) > 0) {
                 parentCurrentNode.setLeft(null);
             }
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == -1) {
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) < 0) {
                 parentCurrentNode.setRight(null);
             }
             elementsCount--;
@@ -143,10 +128,10 @@ public class Tree<T> {
             if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 0) {
                 this.setRoot(currentNode.getRight());
             }
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 1) {
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) > 0) {
                 parentCurrentNode.setLeft(currentNode.getRight());
             }
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == -1) {
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) < 0) {
                 parentCurrentNode.setRight(currentNode.getRight());
             }
             elementsCount--;
@@ -157,10 +142,10 @@ public class Tree<T> {
             if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 0) {
                 this.setRoot(currentNode.getLeft());
             }
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 1) {
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) > 0) {
                 parentCurrentNode.setLeft(currentNode.getLeft());
             }
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == -1) {
+            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) < 0) {
                 parentCurrentNode.setRight(currentNode.getLeft());
             }
             elementsCount--;
@@ -190,7 +175,7 @@ public class Tree<T> {
         return true;
     }
 
-    public void bypassWidth() {
+    public void bypassWidth(Consumer<T> print) {
         checkTreeNull();
         Queue<TreeNode<T>> queue = new LinkedList<>();
         queue.add(root);
@@ -201,30 +186,27 @@ public class Tree<T> {
             if (queue.element().getRight() != null) {
                 queue.add(queue.element().getRight());
             }
-            Consumer<T> print = value -> System.out.print(value + " ");
             print.accept(queue.remove().getValue());
         }
     }
 
-    public void bypassDepthRecursion(TreeNode<T> currentNode) {
+    public void bypassDepthRecursion(TreeNode<T> currentNode, Consumer<T> print) {
         checkTreeNull();
-        Consumer<T> print = value -> System.out.print(value + " ");
         print.accept(currentNode.getValue());
         if (currentNode.getLeft() != null) {
-            bypassDepthRecursion(currentNode.getLeft());
+            bypassDepthRecursion(currentNode.getLeft(), print);
         }
         if (currentNode.getRight() != null) {
-            bypassDepthRecursion(currentNode.getRight());
+            bypassDepthRecursion(currentNode.getRight(), print);
         }
     }
 
-    public void bypassDepth() {
+    public void bypassDepth(Consumer<T> print) {
         checkTreeNull();
         Deque<TreeNode<T>> stack = new LinkedList<>();
         stack.addLast(root);
         while (stack.size() != 0) {
             TreeNode<T> currentNode = stack.removeLast();
-            Consumer<T> print = value -> System.out.print(value + " ");
             print.accept(currentNode.getValue());
             if (currentNode.getRight() != null) {
                 stack.addLast(currentNode.getRight());
