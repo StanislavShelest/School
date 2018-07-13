@@ -30,11 +30,18 @@ public class Tree<T> {
         }
     }
 
+    private void checkValueNull(T value) {
+        if (value == null) {
+            throw new NullPointerException("Введено значение: null");
+        }
+    }
+
     public int getElementsCount() {
         return elementsCount;
     }
 
     public void add(T value) {
+        checkValueNull(value);
         if (this.root == null) {
             this.root = new TreeNode<>(value);
         } else {
@@ -62,6 +69,7 @@ public class Tree<T> {
     }
 
     public boolean search(T value) {
+        checkValueNull(value);
         checkTreeNull();
         TreeNode<T> currentNode = root;
         for (; ; ) {
@@ -85,6 +93,7 @@ public class Tree<T> {
     }
 
     public boolean remove(T value) {
+        checkValueNull(value);
         checkTreeNull();
         TreeNode<T> currentNode = root;
         TreeNode<T> parentCurrentNode = currentNode;

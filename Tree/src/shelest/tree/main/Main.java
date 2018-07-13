@@ -44,5 +44,4 @@ public class Main {
         System.out.print(System.lineSeparator() + "Ряд значений полученный обходом в глубину без рекурсии: ");
         tree.bypassDepth(print);
     }
-
 }
