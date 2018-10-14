@@ -29,7 +29,7 @@ public class ArrayList<T> implements List<T> {
         }
     }
 
-    public void ensureCapacity(int minCapacity) {
+    private void ensureCapacity(int minCapacity) {
         if (this.data.length < minCapacity) {
             this.data = Arrays.copyOf(this.data, minCapacity);
         }
@@ -254,7 +254,14 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public String toString() {
-        StringBuilder line = new StringBuilder();
+        StringBuilder table = new StringBuilder();
+        for (int i = 0; i < listLength; i++) {
+            table.append(data[i].toString());
+            table.append(System.lineSeparator());
+        }
+        return table.toString();
+
+        /*StringBuilder line = new StringBuilder();
         if (listLength != 0) {
             line.append("{");
             for (int i = 0; i < listLength; i++) {
@@ -268,7 +275,7 @@ public class ArrayList<T> implements List<T> {
             line.delete(line.length() - 1, line.length());
             line.append("}");
         }
-        return line.toString();
+        return line.toString();*/
     }
 
     private class ArrayIterator implements Iterator<T> {

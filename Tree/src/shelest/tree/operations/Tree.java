@@ -73,10 +73,11 @@ public class Tree<T> {
         checkTreeNull();
         TreeNode<T> currentNode = root;
         for (; ; ) {
-            if (comparator.compare(value, currentNode.getValue()) == 0) {
+            int comparatorSearch = comparator.compare(value, currentNode.getValue());
+            if (comparatorSearch == 0) {
                 return true;
             }
-            if (comparator.compare(value, currentNode.getValue()) > 0) {
+            if (comparatorSearch > 0) {
                 if (currentNode.getLeft() != null) {
                     currentNode = currentNode.getLeft();
                 } else {
@@ -98,10 +99,11 @@ public class Tree<T> {
         TreeNode<T> currentNode = root;
         TreeNode<T> parentCurrentNode = currentNode;
         for (; ; ) {
-            if (comparator.compare(value, currentNode.getValue()) == 0) {
+            int comparatorRemove = comparator.compare(value, currentNode.getValue());
+            if (comparatorRemove == 0) {
                 break;
             }
-            if (comparator.compare(value, currentNode.getValue()) > 0) {
+            if (comparatorRemove > 0) {
                 parentCurrentNode = currentNode;
                 if (currentNode.getLeft() != null) {
                     currentNode = currentNode.getLeft();
@@ -109,7 +111,7 @@ public class Tree<T> {
                     return false;
                 }
             }
-            if (comparator.compare(value, currentNode.getValue()) < 0) {
+            if (comparatorRemove < 0) {
                 parentCurrentNode = currentNode;
                 if (currentNode.getRight() != null) {
                     currentNode = currentNode.getRight();
@@ -120,13 +122,13 @@ public class Tree<T> {
         }
 
         if (currentNode.getLeft() == null && currentNode.getRight() == null) {
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 0) {
+            if (currentNode == parentCurrentNode) {
                 root = null;
             }
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) > 0) {
+            if (currentNode == parentCurrentNode.getLeft()) {
                 parentCurrentNode.setLeft(null);
             }
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) < 0) {
+            if (currentNode == parentCurrentNode.getRight()) {
                 parentCurrentNode.setRight(null);
             }
             elementsCount--;
@@ -134,13 +136,13 @@ public class Tree<T> {
         }
 
         if (currentNode.getLeft() == null) {
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 0) {
+            if (currentNode == parentCurrentNode) {
                 this.setRoot(currentNode.getRight());
             }
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) > 0) {
+            if (currentNode == parentCurrentNode.getLeft()) {
                 parentCurrentNode.setLeft(currentNode.getRight());
             }
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) < 0) {
+            if (currentNode == parentCurrentNode.getRight()) {
                 parentCurrentNode.setRight(currentNode.getRight());
             }
             elementsCount--;
@@ -148,13 +150,13 @@ public class Tree<T> {
         }
 
         if (currentNode.getRight() == null) {
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) == 0) {
+            if (currentNode == parentCurrentNode) {
                 this.setRoot(currentNode.getLeft());
             }
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) > 0) {
+            if (currentNode == parentCurrentNode.getLeft()) {
                 parentCurrentNode.setLeft(currentNode.getLeft());
             }
-            if (comparator.compare(currentNode.getValue(), parentCurrentNode.getValue()) < 0) {
+            if (currentNode == parentCurrentNode.getRight()) {
                 parentCurrentNode.setRight(currentNode.getLeft());
             }
             elementsCount--;
