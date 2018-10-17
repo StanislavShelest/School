@@ -1,6 +1,6 @@
 package shelest.fine.main;
 
-import shelest.fine.data.Fine;
+import shelest.fine.data.FinancialDocument;
 
 import java.io.*;
 import java.text.ParseException;
@@ -10,9 +10,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 
-
 public class Main {
     public static void main(String[] args) throws ParseException {
+
         System.out.print("Введите размер ставки рефинансирования: ");
         Scanner scannerRateRefinancing = new Scanner(System.in);
         final double RATE_REFINANCING = scannerRateRefinancing.nextDouble();
@@ -35,129 +35,136 @@ public class Main {
 
         final String WAY_TO_File = "LS1.csv";
 
-        ArrayList<Fine> arrayFine = new ArrayList<>();
-        SimpleDateFormat formatDebtDayForPeriod = new SimpleDateFormat("dd.MM.yyyy");
 
-        try (Scanner scanner = new Scanner(new FileInputStream(WAY_TO_File), "windows-1251")) {
-            String headLine = scanner.nextLine();
+        ArrayList<FinancialDocument> arrayFinancialDocuments = new ArrayList<>();
+        SimpleDateFormat formatDates = new SimpleDateFormat("dd.MM.yyyy");
 
-            int countSymbol = 1;
-            for (int i = 0; i < headLine.length(); i++) {
-                if (headLine.charAt(i) == ';') {
-                    countSymbol++;
-                }
-            }
-            String[] arrayColumn = headLine.split(";", countSymbol);
+        try (Scanner scannerInputTable = new Scanner(new FileInputStream(WAY_TO_File), "windows-1251")) {
+            String headLine = scannerInputTable.nextLine();
 
-            int indexAccountingMonth = 0;
-            int indexSum = 0;
-            for (int i = 0; i < arrayColumn.length; i++) {
-                if (arrayColumn[i].equals("Учетный месяц")) {
-                    indexAccountingMonth = i;
-                }
-                if (arrayColumn[i].equals("Сумма")) {
-                    indexSum = i;
-                }
+            int countColumn = getCountColumn(headLine);
+            int[] assignmentColumns = getAssignmentColumns(headLine, countColumn);
+            int indexAccountingMonth = assignmentColumns[0];
+            int indexDateDocument = assignmentColumns[1];
+            int indexType = assignmentColumns[2];
+            int indexSum = assignmentColumns[3];
+
+            while (scannerInputTable.hasNextLine()) {
+                String line = scannerInputTable.nextLine();
+                arrayFinancialDocuments.add(getFinancialDocument(line, countColumn, indexAccountingMonth,
+                        indexDateDocument, indexType, indexSum, DAY_FINE, COUNT_DAY_DELAY_FROM_DAY_FINE));
             }
 
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                String[] arrayValues = line.split(";", countSymbol);
-
-                arrayValues[1] = DAY_FINE + "." + arrayValues[indexAccountingMonth];
-                Date debtDayForPeriod = formatDebtDayForPeriod.parse(arrayValues[1]);
-                Calendar calendar1 = Calendar.getInstance();
-                calendar1.setTime(debtDayForPeriod);
-                calendar1.add(Calendar.MONTH, 1);
-                calendar1.add(Calendar.DAY_OF_MONTH, COUNT_DAY_DELAY_FROM_DAY_FINE);
-                debtDayForPeriod = calendar1.getTime();
-
-                double sum = Double.parseDouble(arrayValues[indexSum]);
-
-                Fine fine = new Fine(debtDayForPeriod, sum);
-                arrayFine.add(fine);
-            }
         } catch (FileNotFoundException e) {
             System.out.print("Данный файл не был найден");
         }
 
-
-        String firstDayPeriodString = "01." + PERIOD_BILLING;
-        Date firstDayPeriod = formatDebtDayForPeriod.parse(firstDayPeriodString);
-
-        double fineForPeriod = 0.0;
-        double increaseFine;
-        boolean isOccurrence = false;
-        Date dayIncreaseFine;
-        Date firstDebtDayForPeriod = arrayFine.get(0).getDebtDayForPeriod();
-        Date lastDebtDayForPeriod = arrayFine.get(arrayFine.size() - 1).getDebtDayForPeriod();
-        if (firstDebtDayForPeriod.before(lastDebtDayForPeriod)) {
-            int index = 0;
-            for (int i = 0; arrayFine.get(i).getDebtDayForPeriod().before(firstDayPeriod); i++) {
-                fineForPeriod += arrayFine.get(i).getSum();
-                index = i;
-                isOccurrence = true;
-            }
-            if (isOccurrence) {
-                dayIncreaseFine = arrayFine.get(index + 1).getDebtDayForPeriod();
-                increaseFine = arrayFine.get(index + 1).getSum();
-            } else {
-                dayIncreaseFine = arrayFine.get(index).getDebtDayForPeriod();
-                increaseFine = arrayFine.get(index).getSum();
-            }
-        } else {
-            int index = arrayFine.size() - 1;
-            for (int i = arrayFine.size() - 1; arrayFine.get(i).getDebtDayForPeriod().before(firstDayPeriod); i--) {
-                fineForPeriod += arrayFine.get(i).getSum();
-                index = i;
-                isOccurrence = true;
-            }
-            if (isOccurrence) {
-                dayIncreaseFine = arrayFine.get(index - 1).getDebtDayForPeriod();
-                increaseFine = arrayFine.get(index - 1).getSum();
-            } else {
-                dayIncreaseFine = arrayFine.get(index).getDebtDayForPeriod();
-                increaseFine = arrayFine.get(index).getSum();
-            }
-        }
-
-        Calendar calendar2 = Calendar.getInstance();
-        calendar2.setTime(firstDayPeriod);
-        int daysOfMonth = calendar2.getActualMaximum(Calendar.DAY_OF_MONTH);
 
         try (PrintWriter calculation = new PrintWriter("CalculationFine.csv")) {
             StringBuilder row = new StringBuilder("день;сумма;пени");
-            Date currentDay = firstDayPeriod;
+
+            String currentDayPeriodString = "01." + PERIOD_BILLING;
+            Date currentDayPeriod = formatDates.parse(currentDayPeriodString);
             double sumFine = 0.0;
+            int daysOfMonth = getDayOfMonth(currentDayPeriod);
             for (int i = 1; i <= daysOfMonth; i++) {
-                double sum;
 
-                if (currentDay.before(dayIncreaseFine)) {
-                    sum = fineForPeriod;
-                } else {
-                    sum = fineForPeriod + increaseFine;
+                double sumDebts = 0.0;
+                for (FinancialDocument document : arrayFinancialDocuments) {
+                    if (document.getDayActionFinancialDocument().compareTo(currentDayPeriod) <= 0) {
+                        sumDebts = Math.round((sumDebts + document.getSum()) * 100) / 100.0;
+                    }
                 }
-                double fine = RATE_REFINANCING * sum / 100 / RATE_REDUCTION_RATIO;
+
+                double fine = Math.round(RATE_REFINANCING * sumDebts / RATE_REDUCTION_RATIO) / 100.0;
+
                 row.append(System.lineSeparator())
-                        .append(formatDebtDayForPeriod.format(currentDay)).append(";")
-                        .append(String.format("%.2f", sum)).append(";")
-                        .append(String.format("%.2f", fine));
+                        .append(formatDates.format(currentDayPeriod)).append(";")
+                        .append(sumDebts).append(";")
+                        .append(fine);
 
-                Calendar calendar3 = Calendar.getInstance();
-                calendar3.setTime(currentDay);
-                calendar3.add(Calendar.DAY_OF_MONTH, 1);
-                currentDay = calendar3.getTime();
-
-                sumFine += fine;
+                currentDayPeriod = getNextDay(currentDayPeriod);
+                sumFine = Math.round((sumFine + fine) * 100) / 100.0;
             }
             row.append(System.lineSeparator())
                     .append("; ИТОГО;")
-                    .append(String.format("%.2f", sumFine));
+                    .append(sumFine);
             calculation.println(row);
-
         } catch (FileNotFoundException e) {
             System.out.print("Данный файл не был найден");
         }
+    }
+
+    private static int getCountColumn(String line) {
+        int countColumn = 1;
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == ';') {
+                countColumn++;
+            }
+        }
+        return countColumn;
+    }
+
+    private static int[] getAssignmentColumns(String line, int countColumn) {
+        String[] arrayColumn = line.split(";", countColumn);
+        int indexAccountingMonth = 0;
+        int indexDateDocument = 0;
+        int indexType = 0;
+        int indexSum = 0;
+        for (int i = 0; i < arrayColumn.length; i++) {
+            if (arrayColumn[i].equals("Учетный месяц")) {
+                indexAccountingMonth = i;
+            }
+            if (arrayColumn[i].equals("Дата документа")) {
+                indexDateDocument = i;
+            }
+            if (arrayColumn[i].equals("Тип")) {
+                indexType = i;
+            }
+            if (arrayColumn[i].equals("Сумма")) {
+                indexSum = i;
+            }
+        }
+        return new int[]{indexAccountingMonth, indexDateDocument, indexType, indexSum};
+    }
+
+    private static FinancialDocument getFinancialDocument(String line, int countColumn, int indexAccountingMonth,
+                                                          int indexDateDocument, int indexType, int indexSum, int DAY_FINE,
+                                                          int COUNT_DAY_DELAY_FROM_DAY_FINE) throws ParseException {
+        String[] arrayValues = line.split(";", countColumn);
+        SimpleDateFormat formatDates = new SimpleDateFormat("dd.MM.yyyy");
+
+        double sum = Double.parseDouble(arrayValues[indexSum]);
+
+        String type = arrayValues[indexType];
+
+        Date dateDocument = formatDates.parse(arrayValues[indexDateDocument]);
+
+        Date dayActionFinancialDocument;
+        if (type.equals("Оплата") || type.equals("Перерасчет")) {
+            dayActionFinancialDocument = dateDocument;
+        } else {
+            dayActionFinancialDocument = formatDates.parse(DAY_FINE + "." + arrayValues[indexAccountingMonth]);
+            Calendar calendarDebtDayForPeriod = Calendar.getInstance();
+            calendarDebtDayForPeriod.setTime(dayActionFinancialDocument);
+            calendarDebtDayForPeriod.add(Calendar.MONTH, 1);
+            calendarDebtDayForPeriod.add(Calendar.DAY_OF_MONTH, COUNT_DAY_DELAY_FROM_DAY_FINE);
+            dayActionFinancialDocument = calendarDebtDayForPeriod.getTime();
+        }
+        return new FinancialDocument(dayActionFinancialDocument, dateDocument, type, sum);
+    }
+
+    private static Date getNextDay(Date currentDay) {
+        Calendar calendarCurrentDay = Calendar.getInstance();
+        calendarCurrentDay.setTime(currentDay);
+        calendarCurrentDay.add(Calendar.DAY_OF_MONTH, 1);
+        return calendarCurrentDay.getTime();
+    }
+
+    private static int getDayOfMonth(Date firstDayPeriod) {
+        Calendar calendarFirstDayPeriod = Calendar.getInstance();
+        calendarFirstDayPeriod.setTime(firstDayPeriod);
+        return calendarFirstDayPeriod.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 }
 
