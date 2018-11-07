@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ArrayList/ArrayList.iml" filepath="$PROJECT_DIR$/ArrayList/ArrayList.iml" />
       <module fileurl="file://$PROJECT_DIR$/ArrayListHome/ArrayListHome.iml" filepath="$PROJECT_DIR$/ArrayListHome/ArrayListHome.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Csv/CFT.iml" filepath="$PROJECT_DIR$/Csv/CFT.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Converter/Converter.iml" filepath="$PROJECT_DIR$/Converter/Converter.iml" />
       <module fileurl="file://$PROJECT_DIR$/Csv/Csv.iml" filepath="$PROJECT_DIR$/Csv/Csv.iml" />
       <module fileurl="file://$PROJECT_DIR$/Fine/Fine.iml" filepath="$PROJECT_DIR$/Fine/Fine.iml" />
       <module fileurl="file://$PROJECT_DIR$/HashTable/HashTable.iml" filepath="$PROJECT_DIR$/HashTable/HashTable.iml" />
